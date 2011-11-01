@@ -1,0 +1,109 @@
+#!/bin/sh
+
+#
+# Starts the web services needed for annotation within luftfoto and COP.
+#
+##########################################################################
+#
+# Below you find the parameters can be configured. To run this package you
+# need a proper java installation (what that means is documented elsewhere)
+# which includes that all the java environmental variables are set.
+#
+
+# The user id that will be running the services. It is no good idea to permit
+# root run services like this. If the service misbehaves that may comprimise
+# the security
+export ANNOTATOR_USER="slu"
+export SU="/bin/su"
+
+# This is where the annotator service has its home, which is where you
+# installed it. Could be ANNOTATOR=/home/annotatord. SLU uses this when
+# developing:
+export ANNOTATOR="/home/slu/projects/luftfoto/trunk/annotator"
+
+# A directory where I can write my PID (process id) when starting. That is to
+# make it easier for you to stop me when needed. Typically RUNS_DIR=/var/run
+export RUNS_DIR="$ANNOTATOR/run_dir"
+
+# JVM will need its libraries. This is the path from the ANNOTATOR directory
+# to the file where the jar files are stored
+export LIB_DIR=lib
+
+# The web services run on port number 8080 as default. Change as needed
+export PORT=8080
+
+# JAVA_HOME
+export JAVA_HOME=/usr/java/jdk1.6.0_24/
+
+# We don't think it should be necessary to edit the rest of this file below
+# this line
+##########################################################################
+
+if ! test -f "$ANNOTATOR/$LIB_DIR/annotator.jar" ; then
+    echo ;
+    echo "I don't really feel at home in my expected position." ;
+    echo "Are you really sure you've installed me? If so, please edit" ;
+    echo "the ANNOTATOR and LIB variables in this script in order to";
+    echo "configure annotator?" ;
+    echo "$ANNOTATOR/$LIB_DIR/annotator.jar";
+    exit 1 
+fi 
+
+cd $ANNOTATOR
+
+
+if ! test -d $JAVA_HOME && ! test -x $JAVA_HOME/bin/java ; then
+    echo ;
+    echo "I cannot find java, and that is serious problem for me.";
+    echo "Could you please check your java installation, and in particular your JAVA_HOME"
+    echo "environmental variable." ;
+    echo ;
+    exit 1
+fi
+
+export JVM="$JAVA_HOME/bin/java"
+
+# The command lines of the start and stop commands are a bit complicated, so
+# therefore I have collected them in separate scripts. In particular the
+# start_annotator needed two commands run by the same user
+START_CMD="$ANNOTATOR/scripts/start_annotator"
+STOP_CMD="$ANNOTATOR/scripts/stop_annotator"
+
+# The class path
+export JAR_FILES="$LIB_DIR/annotator.jar:\
+$LIB_DIR/jersey-bundle-1.5.jar:\
+$LIB_DIR/asm-3.1.jar:\
+$LIB_DIR/c3p0-0.9.1.2.jar:\
+$LIB_DIR/jetty-all-7.0.2.v20100331.jar:\
+$LIB_DIR/jsr311-api-1.1.1.jar:\
+$LIB_DIR/junit-4.7.jar:\
+$LIB_DIR/log4j-1.2.15.jar:\
+$LIB_DIR/ojdbc5.jar:\
+$LIB_DIR/servlet-api-2.5.jar"
+
+function start () {
+    echo "starting annotatord" 
+    $SU $ANNOTATOR_USER -c $START_CMD
+}
+
+function stop () {
+    echo "stopping annotatord" 
+    $SU $ANNOTATOR_USER -c $STOP_CMD
+}
+
+function usage () {
+    echo "Usage $0 start|stop"
+    exit 1
+}
+
+case "$1" in
+    start)
+	start
+        ;;
+    stop)
+	stop
+        ;;
+    *)
+	usage
+	;;
+esac

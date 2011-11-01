@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+<!-- Jetty configuration for the DEVELOPMENT environment -->
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+    <New id="udvTest" class="org.eclipse.jetty.plus.jndi.Resource">
+     <Arg></Arg>
+     <Arg>java:comp/env/jdbc/udvTest</Arg>
+     <Arg>
+      <New class="com.mchange.v2.c3p0.ComboPooledDataSource">
+         <Set name="driverClass">oracle.jdbc.driver.OracleDriver</Set>
+         <Set name="jdbcUrl">jdbc:oracle:thin:@udvikling2.kb.dk:1521:udvl2</Set>
+         <Set name="user">luftfototest</Set>
+         <Set name="password">luftfototest123</Set>
+         </New>
+     </Arg>
+    </New>
+
+
+
+</Configure>

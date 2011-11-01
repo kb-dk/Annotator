@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.0" targetNamespace="http://www.w3.org/2005/Atom" xmlns:tns="http://www.w3.org/2005/Atom" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="category" type="tns:category"/>
+
+  <xs:element name="entry" nillable="true" type="xs:anyType"/>
+
+  <xs:element name="feed" type="tns:atomFeed"/>
+
+  <xs:element name="link" type="tns:link"/>
+
+  <xs:complexType name="atomFeed">
+    <xs:sequence>
+      <xs:element ref="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+      <xs:element ref="tns:link" minOccurs="0"/>
+      <xs:element ref="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="title" type="xs:string" minOccurs="0"/>
+      <xs:element name="updated" type="xs:dateTime" minOccurs="0"/>
+      <xs:element ref="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="comment">
+    <xs:complexContent>
+      <xs:extension base="tns:annotation">
+        <xs:sequence>
+          <xs:element name="content" type="xs:string" minOccurs="0"/>
+          <xs:element name="author" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="hostUri" type="xs:string" minOccurs="0"/>
+          <xs:element ref="tns:link" minOccurs="0"/>
+          <xs:element name="title" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="annotation" abstract="true">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+      <xs:element name="updated" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="link">
+    <xs:sequence/>
+    <xs:attribute name="href" type="xs:string"/>
+    <xs:attribute name="rel" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="tag">
+    <xs:complexContent>
+      <xs:extension base="tns:annotation">
+        <xs:sequence>
+          <xs:element name="link" type="xs:string" minOccurs="0"/>
+          <xs:element name="tagText" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="xlink">
+    <xs:complexContent>
+      <xs:extension base="tns:annotation">
+        <xs:sequence>
+          <xs:element name="author" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element ref="tns:link" minOccurs="0"/>
+          <xs:element ref="tns:link" minOccurs="0"/>
+          <xs:element ref="tns:category" minOccurs="0"/>
+          <xs:element name="title" type="xs:string" minOccurs="0"/>
+          <xs:element name="xlinkType" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="category">
+    <xs:sequence/>
+    <xs:attribute name="term" type="xs:string"/>
+    <xs:attribute name="label" type="xs:string"/>
+  </xs:complexType>
+</xs:schema>
+

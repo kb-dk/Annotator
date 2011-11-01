@@ -1,0 +1,4 @@
+#!/bin/sh
+
+${JVM} -Xmx256m -Xms256m -cp ${JAR_FILES} dk.kb.annotator.webapp.Jetty ${PORT} & 
+echo $! > "${RUNS_DIR}/annotatord.pid"

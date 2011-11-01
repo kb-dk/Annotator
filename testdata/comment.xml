@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title>Comments for resource http://www.kb.dk/foo/bar</title>
+  <link rel="self" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/comment"/>
+  <updated>2003-12-13T18:30:02Z</updated>
+  <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+  <!-- first level comment -->
+  <entry>
+    <title>[none]</title>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+        <name>Jacob Larsen</name>
+    </author>
+    <!-- 1 denotes its a first level comment-->
+    <link rel="alternate" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/comment/1"/>
+    <content>Dette er dog et fint billede</content>
+  </entry>
+  <!-- Second level comment -->
+  <entry>
+    <title>[none]</title>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af7</id>
+    <updated>2003-12-13T18:31:02Z</updated>
+    <author>
+        <name>Sigfrid Lundberg</name>
+    </author>
+    <!-- 1-1 denotes its the first comment to comment 1-->
+    <link rel="alternate" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/comment/1-1"/>
+    <content>Det synes jeg også</content>
+  </entry>
+  <!-- first level comment -->
+  <entry>
+    <title>[none]</title>
+    
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af8</id>
+    <updated>2003-12-13T18:32:02Z</updated>
+    <author>
+        <name>Andreas Westh</name>
+    </author>
+    <!-- 2 denotes second comment-->
+    <link rel="alternate" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/comment/2"/>
+    <content>Mit objektiv er bedre end dit</content>
+  </entry>
+</feed>
+

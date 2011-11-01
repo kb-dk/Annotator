@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title>Tags for resource http://www.kb.dk/foo/bar</title>
+  <link rel="self" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/tag"/>
+  <updated>2003-12-13T18:30:02Z</updated>
+  <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+  <!-- All tags is in the same entry -->
+  <entry>
+    <title>[none]</title>
+    <id>http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/tag</id>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author><name/></author> <!-- Sorry for the empty nametag -->
+    <link rel="alternate" href="http://www.kb.dk/foo/bar"/>
+    <category term="tag" label="bondegård"/>
+    <category term="tag" label="mit gamle hus"/>
+    <category term="tag" label="test-af-tagging-engine"/>
+    <category term="tag" label="Jens Hansen"/>
+    <category term="tag" label="solnedgang"/>
+    <content type="text">bondegård 'mit gamle hus' test-af-tagging-engine 'Jens Hansen' solnedgang</content>
+  </entry>
+  </feed>
+

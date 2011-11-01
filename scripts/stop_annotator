@@ -1,0 +1,5 @@
+#!/bin/sh
+
+pid=`cat $RUNS_DIR/annotatord.pid` 
+kill $pid 
+rm $RUNS_DIR/annotatord.pid 

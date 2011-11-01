@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Annotations for resource http://www.kb.dk/foo/bar</title>
+    <link rel="self" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar"/>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+<entry>
+    <title>[none]</title>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+        <name>Jacob Larsen</name>
+    </author>
+    
+    <link rel="alternate" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/comment/1"/>
+    <content>Dette er dog et fint billede</content>
+  </entry>
+  
+  <entry>
+    <title>[none]</title>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af7</id>
+    <updated>2003-12-13T18:31:02Z</updated>
+    <author>
+        <name>Sigfrid Lundberg</name>
+    </author>
+  
+    <link rel="alternate" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/comment/1-1"/>
+    <content>Det synes jeg også</content>
+  </entry>
+  
+  <entry>
+    <title>[none]</title>
+    
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af8</id>
+    <updated>2003-12-13T18:32:02Z</updated>
+    <author>
+        <name>Andreas Westh</name>
+    </author>
+  
+    <link rel="alternate" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/comment/2"/>
+    <content>Mit objektiv er bedre end dit</content>
+  </entry>
+  <entry>
+    <title>[none]</title>
+    <id>http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/tag</id>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author><name/></author> <!-- Sorry for the empty nametag -->
+    <link rel="alternate" href="http://www.kb.dk/foo/bar"/>
+    <category term="tag" label="bondegård"/>
+    <category term="tag" label="mit gamle hus"/>
+    <category term="tag" label="test-af-tagging-engine"/>
+    <category term="tag" label="Jens Hansen"/>
+    <category term="tag" label="solnedgang"/>
+    <content type="text">bondegård 'mit gamle hus' test-af-tagging-engine 'Jens Hansen' solnedgang</content>
+  </entry>
+   <entry>
+    <!-- title -->
+    <title>Same Building</title>
+    <id>http://foo.bar.dk/UUID-1</id>
+    <!-- timestamp -->
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+         <!-- creator -->
+        <name>Jacob Larsen</name>
+    </author>
+    <!-- xlink:from -->  
+    <link rel="alternate" href="http://www.kb.dk/foo/bar"/>
+    <!-- xlink:to -->  
+    <link rel="related" href="http://www.kb.dk/bar/foo"/>
+    <category term="role" label="similarity"/>
+    
+  </entry>
+
+</feed>

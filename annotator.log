@@ -1,0 +1,4 @@
+[2011-10-21 17.16:15] ERROR ApiUtils parseModifiedSince: could not parse the If-Modified-Since header field: 'Fri, 31 Apr 2005 12:00:00 GMT' error is: Unparseable date: "Fri, 31 Apr 2005 12:00:00 GMT" 
+[2011-10-21 17.16:15] ERROR ApiUtils parseModifiedSince: could not parse the If-Modified-Since header field: 'Fri, 31 Apr 2005 12:00:00 GMT' error is: Unparseable date: "Fri, 31 Apr 2005 12:00:00 GMT" 
+[2011-10-21 17.16:15] ERROR ApiUtils parseModifiedSince: could not parse the If-Modified-Since header field: 'Fri, 06 May 1977 12:00 GMT' error is: Unparseable date: "Fri, 06 May 1977 12:00 GMT" 
+[2011-10-21 17.16:15] ERROR ApiUtils parseModifiedSince: could not parse the If-Modified-Since header field: 'Fri, 06 May 1977 12:00 GMT' error is: Unparseable date: "Fri, 06 May 1977 12:00 GMT" 

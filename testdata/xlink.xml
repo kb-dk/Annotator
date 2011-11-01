@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <title>Xlinks for resource http://www.kb.dk/foo/bar</title>
+
+    <link rel="self" href="http://localhost:8080/annotation/http:%2F%2Fwww.kb.dk%2Ffoo%2Fbar/xlink"/>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+        <!-- title -->
+
+        <id>http://foo.bar.dk/UUID-1</id>
+        <!-- timestamp -->
+        <updated>2003-12-13T18:30:02Z</updated>
+        <author>
+            <!-- creator -->
+            <name>Jacob Larsen</name>
+        </author>
+        <!-- xlink:from -->
+        <link rel="alternate" href="http://www.kb.dk/foo/bar"/>
+        <!-- xlink:to -->
+        <link rel="related" href="http://www.kb.dk/bar/foo"/>
+        <category term="role" label="similarity"/>
+        <title>Same Building</title>
+    </entry>
+</feed>
+
