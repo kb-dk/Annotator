@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
  * Uses Jersey REST framework. (http://jersey.java.net/)
  */
 // "annotation" is the root of all services
-@Path("/annotation")
+@Path("/")
 public class WebServices {
     public WebServices() {
         logger.info("Webservices loaded");

@@ -68,6 +68,6 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>Annotator</finalName>
+        <finalName>annotation</finalName>
     </build>
 </project>
