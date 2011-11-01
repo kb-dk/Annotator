@@ -32,11 +32,6 @@ import javax.ws.rs.core.MediaType;
 // "annotation" is the root of all services
 @Path("/")
 public class WebServices {
-    public WebServices() {
-        logger.info("Webservices loaded");
-        System.out.println("Webservices loaded");
-    }
-
 
     // Just for unittests etc.
     // If set to true - don't access database, only use stubs.
