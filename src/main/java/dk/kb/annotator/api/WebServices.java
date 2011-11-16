@@ -54,7 +54,7 @@ public class WebServices {
         @Produces(MediaType.TEXT_PLAIN)
         public String sayHello() {
             logger.info("sayHello");
-            System.out.println("sayHello");
+
             return "Hello Jersey";
         }
 
@@ -240,7 +240,7 @@ public class WebServices {
             dbReader.dbClose();
 
             if (atom != null) {
-                logger.debug(" return ok");
+                logger.debug(" return ok. hits: " + tmpList.size());
                 return Response.ok(atom).build();
             } else {
                 logger.debug(" Not Modified since");

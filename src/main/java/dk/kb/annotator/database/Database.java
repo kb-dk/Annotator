@@ -37,7 +37,7 @@ public final class Database {
 	    if (datasource != null) {
 		conn = datasource.getConnection();
             logger.info(" Database Connection established");
-            System.out.println(" Database Connection established");
+
 	    }
 	    else {
 		logger.debug("Failed to lookup datasource.");

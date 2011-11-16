@@ -107,6 +107,8 @@ public class DbWriter {
         }
 
         if (this.execute(stmt)) {
+            logger.debug("Saved xlink " + x.toString());
+
             return x;
         } else {
             return null;
@@ -138,6 +140,8 @@ public class DbWriter {
         }
 
         if (this.execute(stmt)) {
+            logger.debug("Saved tag " + t.toString());
+
             return t;
         } else {
             return null;
@@ -173,6 +177,7 @@ public class DbWriter {
         }
 
         if (this.execute(stmt)) {
+            logger.debug("Saved comment " + c.toString());
             return c;
         } else {
             return null;
