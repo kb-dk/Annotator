@@ -10,7 +10,10 @@ import org.apache.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,9 +71,9 @@ public class WebServices {
      * @return Atom XML
      */
     @GET
-    @Path("/{uri}")
+    @Path("/")      // {uri}
     @Produces({"application/atom+xml", "application/xml", "application/json"})
-    public Response getAnnotations(@PathParam("uri") String uri,
+    public Response getAnnotations(@QueryParam("uri") String uri,
                                    @Context HttpHeaders headers) {
         logger.debug("GET (atom+xml) URI: " + uri);
 
@@ -153,12 +156,20 @@ public class WebServices {
      */
 
     @GET
-    @Path("/{uri}/{type}")
+    @Path("/{type}")
     @Produces({"application/atom+xml", "application/xml", "application/json"})
-    public Response getAnnotations(@PathParam("uri") String uri,
+    public Response getAnnotations(@QueryParam("uri") String uri,
                                    @PathParam("type") ApiUtils.annotationType type,
                                    @Context HttpHeaders headers) {
         logger.debug("GET (atom+xml) URI: " + uri + " type " + type);
+        //URLEncoder urlEncoder = new URLEncoder();
+        try {
+            uri = URLDecoder.decode(uri, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+         logger.debug("GET (atom+xml) URI: " + uri + " type " + type);
         Calendar modifiedSince = ApiUtils.getModifiedSince(headers);
 
         // Instantiate read & write handles
@@ -248,6 +259,8 @@ public class WebServices {
             }
         }
     }
+
+
 
     /**
      * Sets the id and link on a AtomFeed.
