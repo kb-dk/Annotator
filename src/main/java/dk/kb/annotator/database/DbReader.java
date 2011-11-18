@@ -173,7 +173,7 @@ public class DbReader {
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, uri);
                 }
-                logger.debug(stmt.toString());
+                //logger.debug(stmt.toString());
 
                 return stmt.executeQuery();
             }
