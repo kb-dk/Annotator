@@ -45,10 +45,10 @@ public final class Database {
       
 	}
 	catch ( NamingException ex ) {
-	    logger.debug("Naming ex - Cannot get connection: " + ex);
+	    logger.error("Naming ex - Cannot get connection: " + ex);
 	}
 	catch(SQLException ex){
-	    logger.debug("SQL ex - Cannot get connection: " + ex);
+	    logger.error("SQL ex - Cannot get connection: " + ex);
 	}
 	return conn;
 
