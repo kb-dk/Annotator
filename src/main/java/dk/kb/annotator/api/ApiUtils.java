@@ -23,7 +23,7 @@ public class ApiUtils {
      * Definition of annotation semantics
      */
     public enum annotationType {
-        xlink, comment, tag
+        xlink, comment, tag, tag_aerial
     }
 
     /**

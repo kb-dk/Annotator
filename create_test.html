@@ -9,7 +9,16 @@
 <div>
     <h1>Create Tag</h1>
 
-    <form method="post" action="http://localhost:8080/annotation/tag" accept-charset="UTF-8">
+    <form method="post" action="http://distest.kb.dk:8080/annotation/tag" accept-charset="UTF-8">
+        Value: <input type="text" name="value" title="value" value="Tagget" maxlength="50"/>  </br>
+        Creator: <input type="text" name="creator" title="Creator" value="Forfatter" maxlength="50">   </br>
+        From: <input type="text" name="from" title="from" value="from" maxlength="50">    </br>
+        <input type="submit" value="submit">
+    </form>
+
+        <h1>Create Aerial Tag</h1>
+
+    <form method="post" action="http://localhost:8080/annotation/tag_aerial" accept-charset="UTF-8">
         Value: <input type="text" name="value" title="value" value="Tagget" maxlength="50"/>  </br>
         Creator: <input type="text" name="creator" title="Creator" value="Forfatter" maxlength="50">   </br>
         From: <input type="text" name="from" title="from" value="from" maxlength="50">    </br>
@@ -18,7 +27,7 @@
 
     <h1>Create xlink</h1>
 
-    <form method="post" action="http://localhost:8080/annotation/xlink" accept-charset="UTF-8">
+    <form method="post" action="http://distest.kb.dk:8080/annotation/xlink" accept-charset="UTF-8">
         Title: <input type="text" name="title" title="Title" value="Overskrift" maxlength="50"/>  </br>
         Creator: <input type="text" name="creator" title="Creator" value="Forfatter" maxlength="50">   </br>
         To: <input type="text" name="to" title="to" value="to" maxlength="50">                              </br>
@@ -35,7 +44,7 @@
 
     <h1>Create comment</h1>
 
-    <form method="post" action="http://localhost:8080/annotation/comment">
+    <form method="post" action="http://distest.kb.dk:8080/annotation/comment">
         Text: <input type="text" name="value" title="value" value="en kommentar" maxlength="200"/>  </br>
         Creator: <input type="text" name="creator" title="Creator" value="Forfatter" maxlength="50">   </br>
         From: <input type="text" name="from" title="from" value="from"

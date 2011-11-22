@@ -342,6 +342,23 @@ public class WebServices {
                         return Response.created(null).build();
                     }
                 }
+            case tag_aerial:
+                if (value.equals("")) {
+                    return Response.status(Response.Status.BAD_REQUEST).build();
+                }
+                annotation = new dk.kb.annotator.model.Tag("", value, rightNow, from, creator);
+                dk.kb.annotator.model.Annotation aerialTag = dbWriter.writeAerialTag((dk.kb.annotator.model.Tag) annotation);
+                if (aerialTag != null) { // Tag succesfully written to db. todo flyttes til util klasse.
+                    try {
+                        URI permaUri = new URI(aerialTag.getId());
+                        dbWriter.dbClose();
+                        return Response.created(permaUri).build();
+                    } catch (java.net.URISyntaxException uriErr) {
+                        logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());
+                        dbWriter.dbClose();
+                        return Response.created(null).build();
+                    }
+                }
             case comment:
                 if (value.equals("")) {
                     return Response.status(Response.Status.BAD_REQUEST).build();

@@ -49,6 +49,11 @@ public class DbWriter {
                     "(ID,XLINK_TO,CREATOR,TIMESTAMP,TAG_VALUE) " +
                     "values (?,?,?,?,?)";
 
+      private static final String INSERT_TAG_JOIN =
+            "insert into tag_join " +
+                    "(OID, TID, id) " +
+                    "values (?,?,?)";
+
     private static final String UPDATE_TAG =
             "update tag set " +
                     " XLINK_TO=?,CREATOR=?,TIMESTAMP=?,TAG_VALUE=? " +
@@ -113,6 +118,33 @@ public class DbWriter {
         } else {
             return null;
         }
+    }
+
+        public Tag writeAerialTag(Tag t) {
+        if(writeTag(t) != null){
+            java.sql.PreparedStatement stmt = null;
+            try {
+                    stmt = conn.prepareStatement(INSERT_TAG_JOIN);
+                    stmt.setString(1, t.getLink());
+                    stmt.setString(2, t.getId());
+                    stmt.setString(3, t.getCreator()[0]);
+
+            } catch (java.sql.SQLException sqlException) {
+                logger.warn(sqlException.getMessage());
+                return null;
+            }
+
+            if (this.execute(stmt)) {
+                logger.debug("Saved aerial join_tag tag " + t.toString());
+
+                return t;
+            } else {
+                return null;
+            }
+        }else {
+            return null;
+        }
+
     }
 
     public Tag writeTag(Tag t) {
