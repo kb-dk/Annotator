@@ -6,24 +6,32 @@ import dk.kb.annotator.database.DbReader;
 import dk.kb.annotator.database.DbWriter;
 import dk.kb.annotator.model.Annotation;
 import dk.kb.annotator.model.AtomFeed;
+import dk.kb.annotator.model.Comment;
+import dk.kb.annotator.model.Tag;
+import dk.kb.annotator.model.Xlink;
 import org.apache.log4j.Logger;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 // Jersey imports
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 // Java core imports
 // Local imports
 
@@ -49,17 +57,14 @@ public class WebServices {
     // This is the database read handle
     private DbReader dbReader = null; //new DbReader();
 
+    @GET
+    @Path("/hello")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String sayHello() {
+        logger.info("sayHello");
 
-
-
-        @GET
-        @Path("/hello")
-        @Produces(MediaType.TEXT_PLAIN)
-        public String sayHello() {
-            logger.info("sayHello");
-
-            return "Hello Jersey";
-        }
+        return "Hello Jersey";
+    }
 
     //----------- Read (GET) methods of our REST Api---------------//
 
@@ -85,7 +90,6 @@ public class WebServices {
 
         if (isTest) { // Just for testing purpose
             logger.debug(" Test. Returning OK");
-            //return Response.ok(WebServicesTest.getAnnotationsAsXml()).build();
             return  Response.ok().build();
         } else { // "real" case
 
@@ -93,7 +97,6 @@ public class WebServices {
             ArrayList<dk.kb.annotator.model.Xlink> xlinks = null;
             ArrayList<dk.kb.annotator.model.Tag> tags = null;
             ArrayList<dk.kb.annotator.model.Comment> comments = null;
-
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  'at' HH:mm:ss z");
 
@@ -119,15 +122,13 @@ public class WebServices {
             }
             // Create the atom feed
 
-            //Comment tmpComment = new Comment("0", "test", new GregorianCalendar(), "etlink", "Andreas", "hosturi");
-            //comments.add(tmpComment);
             logResultFromDB(xlinks, tags, comments);
-            dk.kb.annotator.model.AtomFeed atom = new dk.kb.annotator.model.AtomFeed("Annotations since " + modifiedSince, comments, tags, xlinks); // todo: rethink this title
+            dk.kb.annotator.model.AtomFeed atom = new dk.kb.annotator.model.AtomFeed("Annotations since "
+                    + modifiedSince, comments, tags, xlinks); // todo: rethink this title
 
             setIDandLink(uri, null, headers, atom);
             atom.initializeSingleTag();
             /* Return the the connections to the pool */
-            dbReader.dbClose();
 
             if (!atom.isEmpty()) { // OK 
                 logger.debug("  return ok ");
@@ -139,7 +140,9 @@ public class WebServices {
         }
     }
 
-    private void logResultFromDB(ArrayList<dk.kb.annotator.model.Xlink> xlinks, ArrayList<dk.kb.annotator.model.Tag> tags, ArrayList<dk.kb.annotator.model.Comment> comments) {
+    private void logResultFromDB(ArrayList<Xlink> xlinks,
+                                 ArrayList<Tag> tags,
+                                 ArrayList<Comment> comments) {
         logger.trace("comments = " + comments);
         logger.trace("tags = " + tags);
         logger.trace("xlinks = " + xlinks);
@@ -154,7 +157,6 @@ public class WebServices {
      * @param type one of "tag" | "comment" | "xlink"
      * @return Atom XML
      */
-
     @GET
     @Path("/{type}")
     @Produces({"application/atom+xml", "application/xml", "application/json"})
@@ -162,22 +164,18 @@ public class WebServices {
                                    @PathParam("type") ApiUtils.annotationType type,
                                    @Context HttpHeaders headers) {
         logger.debug("GET (atom+xml) URI: " + uri + " type " + type);
-        //URLEncoder urlEncoder = new URLEncoder();
         try {
             uri = URLDecoder.decode(uri, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
          logger.debug("GET (atom+xml) URI: " + uri + " type " + type);
         Calendar modifiedSince = ApiUtils.getModifiedSince(headers);
 
-        // Instantiate read & write handles
         dbReader = new DbReader();
-        dbWriter = new DbWriter();
 
         if (isTest) { // Just for testing purpose
-            //return Response.ok(WebServicesTest.getAnnotationsAsXml(type)).build();
             return Response.ok().build();
         } else { // "real" case
             ArrayList<dk.kb.annotator.model.Xlink> xlinks = new ArrayList<dk.kb.annotator.model.Xlink>();
@@ -185,8 +183,8 @@ public class WebServices {
             ArrayList<dk.kb.annotator.model.Comment> comments = new ArrayList<dk.kb.annotator.model.Comment>();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  'at' HH:mm:ss z");
             if (modifiedSince != null) {
-                logger.debug(" all results, modifiedSince " + sdf.format(modifiedSince.getTime()));   //
-                // Read all annotaions
+                logger.debug(" all results, modifiedSince " + sdf.format(modifiedSince.getTime()));
+                // Read all annotations
                 switch (type) {
                     case xlink:
                         xlinks = dbReader.readXlinks(modifiedSince, uri);
@@ -218,18 +216,15 @@ public class WebServices {
                         break;
                     default:
                         return Response.status(Response.Status.BAD_REQUEST).build();
-                    //throw new UnsupportedOperationException("type is not being handled by the implementation! " + type);
                 }
             }
             // XML-ify the beans
             // todo: consider putting all this in utility class
-            //Document atomXML = null;//AnnotationUtils.createAtomXML(xlinks, tags, comments);
             logResultFromDB(xlinks, tags, comments);
 
-            dk.kb.annotator.model.AtomFeed atom = new dk.kb.annotator.model.AtomFeed("Annotations since " + modifiedSince, comments, tags, xlinks);
+            AtomFeed atom = new AtomFeed("Annotations since " + modifiedSince, comments, tags, xlinks);
 
             setIDandLink(uri, type, headers, atom);
-
 
             // last updated
             ArrayList<Annotation> tmpList = new ArrayList<Annotation>();
@@ -239,16 +234,8 @@ public class WebServices {
             Calendar lastUpdated = new GregorianCalendar();
             lastUpdated.setTimeInMillis(ApiUtils.getLatestTimestamp(tmpList).getTime());
             atom.setUpdated(lastUpdated);
-
-
             atom.setTitleinAtomFeed(uri, type, atom);
-
             atom.initializeSingleTag();
-            //printListsInAtomFeed(atom);
-
-            /* Return the the connections to the pool */
-
-            dbReader.dbClose();
 
             if (atom != null) {
                 logger.debug(" return ok. hits: " + tmpList.size());
@@ -260,8 +247,6 @@ public class WebServices {
         }
     }
 
-
-
     /**
      * Sets the id and link on a AtomFeed.
      *
@@ -270,7 +255,6 @@ public class WebServices {
      * @param headers
      * @param atom
      */
-
     private void setIDandLink(String uri, ApiUtils.annotationType type, HttpHeaders headers, AtomFeed atom) {
         String host = headers.getRequestHeader(HttpHeaders.HOST).toString().replace("[", "").replace("]", "");
         String typeStr = "";
@@ -314,9 +298,8 @@ public class WebServices {
 
         // Instantiate read & write handles
         dbWriter = new DbWriter();
-        //dbReader = new DbReader();
 
-        dk.kb.annotator.model.Annotation annotation = null;
+        Annotation annotation = null;
         // Current time
         Calendar rightNow = Calendar.getInstance();
 
@@ -329,8 +312,8 @@ public class WebServices {
                 if (value.equals("")) {
                     return Response.status(Response.Status.BAD_REQUEST).build();
                 }
-                annotation = new dk.kb.annotator.model.Tag("", value, rightNow, from, creator);
-                dk.kb.annotator.model.Annotation newTag = dbWriter.writeTag((dk.kb.annotator.model.Tag) annotation);
+                annotation = new Tag("", value, rightNow, from, creator);
+                Annotation newTag = dbWriter.writeTag((Tag) annotation);
                 if (newTag != null) { // Tag succesfully written to db. todo flyttes til util klasse.
                     try {
                         URI permaUri = new URI(newTag.getId());
@@ -363,8 +346,8 @@ public class WebServices {
                 if (value.equals("")) {
                     return Response.status(Response.Status.BAD_REQUEST).build();
                 }
-                annotation = new dk.kb.annotator.model.Comment("", value, rightNow, from, creator, "http://" + host.replace("[", "").replace("]", "") + "/" + uriInfo.getAbsolutePath().getRawPath());
-                dk.kb.annotator.model.Annotation newComment = dbWriter.writeComment((dk.kb.annotator.model.Comment) annotation);
+                annotation = new Comment("", value, rightNow, from, creator, "http://" + host.replace("[", "").replace("]", "") + "/" + uriInfo.getAbsolutePath().getRawPath());
+                Annotation newComment = dbWriter.writeComment((Comment) annotation);
                 if (newComment != null) { // Tag succesfully written to db
                     try {
                         URI permaUri = new URI(newComment.getId());
@@ -383,11 +366,10 @@ public class WebServices {
                     return Response.status(Response.Status.BAD_REQUEST).build();
                 }
                 // todo: make role one of ApiUtils.AnnotationRole
-                annotation = new dk.kb.annotator.model.Xlink("", role + "", title, "simple", rightNow, to, from, creator);
-                dk.kb.annotator.model.Annotation newXlink = dbWriter.writeXlink((dk.kb.annotator.model.Xlink) annotation);
+                annotation = new Xlink("", role + "", title, "simple", rightNow, to, from, creator);
+                Annotation newXlink = dbWriter.writeXlink((Xlink) annotation);
 
-
-                if (newXlink != null) { // Tag succesfully written to db
+                if (newXlink != null) { // Tag successfully written to db
                     try {
                         URI permaUri = new URI(newXlink.getId());
                         dbWriter.dbClose();
@@ -407,8 +389,6 @@ public class WebServices {
                 return Response.status(Response.Status.BAD_REQUEST).build();
 
         }
-
-
     }
 
 
@@ -446,6 +426,4 @@ public class WebServices {
         logger.trace("atom.getXlinks() = " + atom.getXlinks());
         logger.trace("atom.getComments() = " + atom.getComments());
     }
-
-
 }

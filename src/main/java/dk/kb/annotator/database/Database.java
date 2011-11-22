@@ -1,7 +1,5 @@
 package dk.kb.annotator.database;
 
-//Log imports
-
 import org.apache.log4j.Logger;
 
 import javax.naming.Context;
@@ -19,8 +17,7 @@ public final class Database {
 
     public static java.sql.Connection getConnection() {
 
-//	String DATASOURCE_CONTEXT = "java:comp/env/jdbc/udvTest";
-        String DATASOURCE_CONTEXT = "java:comp/env/jdbc/KBsannotationDB";
+    String DATASOURCE_CONTEXT = "java:comp/env/jdbc/KBsannotationDB";
 
     
 	Connection conn = null;
@@ -29,18 +26,13 @@ public final class Database {
 	
 	    Context initialContext = new InitialContext();
      
-	    if ( initialContext == null){
-		logger.debug("JNDI problem. Cannot get InitialContext.");
-	    }
-      
 	    DataSource datasource = (DataSource)initialContext.lookup(DATASOURCE_CONTEXT);
 	    if (datasource != null) {
-		conn = datasource.getConnection();
+		    conn = datasource.getConnection();
             logger.info(" Database Connection established");
 
-	    }
-	    else {
-		logger.debug("Failed to lookup datasource.");
+	    } else {
+		    logger.debug("Failed to lookup datasource.");
 	    }
       
 	}
@@ -49,6 +41,7 @@ public final class Database {
 	}
 	catch(SQLException ex){
 	    logger.error("SQL ex - Cannot get connection: " + ex);
+        ex.printStackTrace();
 	}
 	return conn;
 

@@ -3,6 +3,15 @@ package dk.kb.annotator.database;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
+import org.apache.log4j.Logger;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * A class that writes to the database
@@ -12,11 +21,7 @@ import dk.kb.annotator.model.Xlink;
 
 public class DbReader {
 
-    private static org.apache.log4j.Logger logger =
-            org.apache.log4j.Logger.getLogger(DbWriter.class);
-
-    private java.sql.Connection conn = null;
-    private Database db = null;
+    private static Logger logger = Logger.getLogger(DbWriter.class);
 
     private static final String SELECT_FROM = "SELECT * FROM ";
 
@@ -30,157 +35,256 @@ public class DbReader {
     private static final String WHERE_XLINK_URI_MODIFIED_SINCE = " WHERE XLINK_FROM=? AND TIMESTAMP>=? " +
             " ORDER BY TIMESTAMP DESC  ";
 
-
     public DbReader() {
-        this.conn = Database.getConnection();
-    }
 
-    public void dbClose() {
-        try {
-            if (this.conn != null) {
-                this.conn.close();
-                this.conn = null;
-            }
-        } catch (java.sql.SQLException sqlException) {
-            logger.warn(sqlException.getMessage());
-        }
     }
 
     public java.util.ArrayList<Xlink> readXlinks(String uri) {
         return readXlinks(null, uri);
     }
 
-    public java.util.ArrayList<Xlink> readXlinks(java.util.Calendar createdBefore, String uri) {
-        java.util.ArrayList<Xlink> xList = null;
+    public ArrayList<Xlink> readXlinks(Calendar createdBefore, String uri) {
 
-        java.sql.ResultSet result = this.doQuery("XLINK", uri, createdBefore);
-        if (result != null) {
+        ArrayList<Xlink> xList = null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        String sql;
 
-            xList = new java.util.ArrayList<Xlink>();
-            try {
-                while (result.next()) {
-                    java.util.Calendar time = java.util.Calendar.getInstance();
-                    time.setTimeInMillis(result.getTimestamp("TIMESTAMP").getTime());
-                    Xlink xlink = new Xlink(result.getString("ID"),
-                            result.getString("XLINK_ROLE"),
-                            result.getString("XLINK_TITLE"),
-                            result.getString("XLINK_TYPE"),
-                            time,
-                            result.getString("XLINK_TO"),
-                            result.getString("XLINK_FROM"),
-                            result.getString("CREATOR"));
-                    xList.add(xlink);
-                }
-                result.close();
-            } catch (java.sql.SQLException sqlException) {
-                logger.warn(sqlException.getMessage());
-            }
-        }
-        return xList;
-    }
-
-
-    public java.util.ArrayList<Tag> readTags(String uri) {
-        java.util.ArrayList<Tag> tList = null;
-        return readTags(null, uri);
-    }
-
-    public java.util.ArrayList<Tag> readTags(java.util.Calendar createdBefore,
-                                             String uri) {
-        java.util.ArrayList<Tag> tList = null;
-
-        java.sql.ResultSet result = this.doQuery("TAG", uri, createdBefore);
-        if (result != null) {
-
-            tList = new java.util.ArrayList<Tag>();
-            try {
-                while (result.next()) {
-                    java.util.Calendar time = java.util.Calendar.getInstance();
-                    time.setTimeInMillis(result.getTimestamp("TIMESTAMP").getTime());
-                    Tag tag = new Tag(result.getString("ID"),
-                            result.getString("TAG_VALUE"),
-                            time,
-                            result.getString("XLINK_TO"),
-                            result.getString("CREATOR"));
-                    tList.add(tag);
-                }
-                result.close();
-            } catch (java.sql.SQLException sqlException) {
-                logger.warn(sqlException.getCause().getMessage() + " msg: " + sqlException.getMessage());
-            }
-        }
-        return tList;
-    }
-
-    public java.util.ArrayList<Comment> readComments(java.util.Calendar createdBefore,
-                                                     String uri) {
-        java.util.ArrayList<Comment> cList = null;
-        java.sql.ResultSet result = this.doQuery("COMMENTS", uri, createdBefore);
-
-        if (result != null) {
-
-            cList = new java.util.ArrayList<Comment>();
-            try {
-                while (result.next()) {
-                    java.util.Calendar time = java.util.Calendar.getInstance();
-                    time.setTimeInMillis(result.getTimestamp("TIMESTAMP").getTime());
-                    Comment comment = new Comment(result.getString("ID"),
-                            result.getString("COMMENT_TEXT"),
-                            time,
-                            result.getString("XLINK_TO"),
-                            result.getString("CREATOR"),
-                            result.getString("HOST_URI"));
-                    cList.add(comment);
-                }
-                result.close();
-            } catch (java.sql.SQLException sqlException) {
-                logger.warn(sqlException.getMessage());
-            }
-        }
-        return cList;
-    }
-
-    public java.util.ArrayList<Comment> readComments(String uri) {
-        return readComments(null, uri);
-    }
-
-    private java.sql.ResultSet doQuery(String table,
-                                       String uri,
-                                       java.util.Calendar createdBefore) {
-
-        java.sql.PreparedStatement stmt = null;
-        java.sql.ResultSet result = null;
-        String sql = "";
         try {
             if (uri.equals("")) {
                 return null;
             } else {
+                conn = Database.getConnection();
                 if (createdBefore != null) {
-                    if (table.equals("XLINK")) {
-                        sql = SELECT_FROM + table + WHERE_XLINK_URI_MODIFIED_SINCE;
-                    } else {
-                        sql = SELECT_FROM + table + WHERE_URI_MODIFIED_SINCE;
-                    }
+                    sql = SELECT_FROM + "XLINK" + WHERE_XLINK_URI_MODIFIED_SINCE;
+
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, uri);
-                    stmt.setTimestamp(2, new java.sql.Timestamp(createdBefore.getTimeInMillis()));
+                    stmt.setTimestamp(2, new Timestamp(createdBefore.getTimeInMillis()));
                 } else {
-                    if (table.equals("XLINK")) {
-                        sql = SELECT_FROM + table + WHERE_XLINK_URI;
-                    } else {
-                        sql = SELECT_FROM + table + WHERE_URI;
-                    }
+                    sql = SELECT_FROM + "XLINK" + WHERE_XLINK_URI;
+
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, uri);
                 }
-                //logger.debug(stmt.toString());
+                logger.info(stmt.toString());
 
-                return stmt.executeQuery();
+                resultSet = stmt.executeQuery();
+
+                if (resultSet != null) {
+
+                    xList = new ArrayList<Xlink>();
+                    while (resultSet.next()) {
+                        Calendar time = Calendar.getInstance();
+                        time.setTimeInMillis(resultSet.getTimestamp("TIMESTAMP").getTime());
+                        Xlink xlink = new Xlink(resultSet.getString("ID"),
+                                resultSet.getString("XLINK_ROLE"),
+                                resultSet.getString("XLINK_TITLE"),
+                                resultSet.getString("XLINK_TYPE"),
+                                time,
+                                resultSet.getString("XLINK_TO"),
+                                resultSet.getString("XLINK_FROM"),
+                                resultSet.getString("CREATOR"));
+                        xList.add(xlink);
+                    }
+                }
             }
-        } catch (java.sql.SQLException sqlException) {
-            logger.warn(sqlException.getMessage());
+        } catch (SQLException sqlException) {
+            logger.error(sqlException.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
+
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
+
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
         }
-        return null;
+
+        return xList;
+    }
+
+
+    public ArrayList<Tag> readTags(String uri) {
+        return readTags(null, uri);
+    }
+
+    /**
+     * Read data from the TAGS table
+     *
+     * @param createdBefore
+     * @param uri
+     * @return
+     */
+    public ArrayList<Tag> readTags(Calendar createdBefore, String uri) {
+
+        Connection conn = null;
+        ArrayList<Tag> tList = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        String sql;
+
+        if (uri.equals("")) {
+            return null;
+        } else {
+            try {
+                conn = Database.getConnection();
+                if (createdBefore != null) {
+                    sql = SELECT_FROM + "TAG" + WHERE_URI_MODIFIED_SINCE;
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, uri);
+                    stmt.setTimestamp(2, new Timestamp(createdBefore.getTimeInMillis()));
+                } else {
+                    sql = SELECT_FROM + "TAG" + WHERE_URI;
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, uri);
+                }
+
+                resultSet = stmt.executeQuery();
+
+                if (resultSet != null) {
+
+                    tList = new ArrayList<Tag>();
+                    while (resultSet.next()) {
+                        Calendar time = Calendar.getInstance();
+                        time.setTimeInMillis(resultSet.getTimestamp("TIMESTAMP").getTime());
+                        Tag tag = new Tag(resultSet.getString("ID"),
+                                resultSet.getString("TAG_VALUE"),
+                                time,
+                                resultSet.getString("XLINK_TO"),
+                                resultSet.getString("CREATOR"));
+                        tList.add(tag);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.error(e);
+            } finally {
+                try {
+                    if (resultSet != null){
+                        resultSet.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (stmt != null){
+                        stmt.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (conn != null){
+                        conn.close();
+                    }
+                } catch (SQLException e) {
+                    logger.warn(e);
+                }
+            }
+        }
+
+        return tList;
+    }
+
+    /**
+     * Read comments from the COMMENTS database table
+     * @param createdBefore
+     * @param uri
+     * @return an ArrayList of Comment objects
+     */
+    public ArrayList<Comment> readComments(Calendar createdBefore, String uri) {
+
+        ArrayList<Comment> cList = null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        String sql;
+        try {
+            if (uri.equals("")) {
+                return null;
+            } else {
+                conn = Database.getConnection();
+                if (createdBefore != null) {
+                    sql = SELECT_FROM + "COMMENTS" + WHERE_URI_MODIFIED_SINCE;
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, uri);
+                    stmt.setTimestamp(2, new Timestamp(createdBefore.getTimeInMillis()));
+                } else {
+                    sql = SELECT_FROM + "COMMENTS" + WHERE_URI;
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, uri);
+                }
+                logger.info(stmt.toString());
+
+                resultSet = stmt.executeQuery();
+
+                if (resultSet != null) {
+                    cList = new ArrayList<Comment>();
+                    while (resultSet.next()) {
+                        Calendar time = Calendar.getInstance();
+                        time.setTimeInMillis(resultSet.getTimestamp("TIMESTAMP").getTime());
+                        Comment comment = new Comment(resultSet.getString("ID"),
+                                resultSet.getString("COMMENT_TEXT"),
+                                time,
+                                resultSet.getString("XLINK_TO"),
+                                resultSet.getString("CREATOR"),
+                                resultSet.getString("HOST_URI"));
+                        cList.add(comment);
+                    }
+                }
+            }
+        } catch (SQLException sqlException) {
+            logger.error(sqlException.getMessage());
+        } finally {
+            try {
+                if (resultSet != null){
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
+
+            try {
+                if (stmt != null){
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
+
+            try {
+                if (conn != null){
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
+        }
+
+        return cList;
+    }
+
+    public ArrayList<Comment> readComments(String uri) {
+        return readComments(null, uri);
     }
 
 }
