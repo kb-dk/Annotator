@@ -49,7 +49,7 @@ public class DbWriter {
                     "(ID,XLINK_TO,CREATOR,TIMESTAMP,TAG_VALUE) " +
                     "values (?,?,?,?,?)";
 
-      private static final String INSERT_TAG_JOIN =
+    private static final String INSERT_TAG_JOIN =
             "insert into tag_join " +
                     "(OID, TID, id) " +
                     "values (?,?,?)";
@@ -120,30 +120,56 @@ public class DbWriter {
         }
     }
 
-        public Tag writeAerialTag(Tag t) {
-        if(writeTag(t) != null){
+    public Tag writeAerialTag(Tag t) {
+        String existingId = semanticExists(t);
+        if (existingId != null && existingId.length() > 0) {    // do a insert in the join table
+            logger.debug("Tag already exist! Create a relation to that tag. Tag id:" +existingId );
             java.sql.PreparedStatement stmt = null;
-            try {
+
+                try {
+                    stmt = conn.prepareStatement(INSERT_TAG_JOIN);
+                    stmt.setString(1, t.getLink());
+                    stmt.setString(2, existingId);
+                    stmt.setString(3, t.getCreator()[0]);
+
+                } catch (java.sql.SQLException sqlException) {
+                    logger.warn(sqlException.getMessage());
+                    return null;
+                }
+                if (this.execute(stmt)) {
+                    logger.debug("Saved aerial join_tag tag " + t.toString());
+
+                    return t;
+                } else {
+                    return null;
+                }
+
+        } else {    // existing tag doesn't exist.
+            if (writeTag(t) != null) {    // write the tag
+                // create a relation between a copject to the recently inserted tag table.
+                java.sql.PreparedStatement stmt = null;
+                try {
                     stmt = conn.prepareStatement(INSERT_TAG_JOIN);
                     stmt.setString(1, t.getLink());
                     stmt.setString(2, t.getId());
                     stmt.setString(3, t.getCreator()[0]);
 
-            } catch (java.sql.SQLException sqlException) {
-                logger.warn(sqlException.getMessage());
-                return null;
-            }
+                } catch (java.sql.SQLException sqlException) {
+                    logger.warn(sqlException.getMessage());
+                    return null;
+                }
 
-            if (this.execute(stmt)) {
-                logger.debug("Saved aerial join_tag tag " + t.toString());
+                if (this.execute(stmt)) {
+                    logger.debug("Saved aerial join_tag tag " + t.toString());
 
-                return t;
-            } else {
-                return null;
+                    return t;
+                } else {
+                    return null;
+                }
             }
-        }else {
-            return null;
         }
+        return null;
+
 
     }
 
@@ -255,6 +281,70 @@ public class DbWriter {
         }
 
         return found;
+
+    }
+
+    /**
+     * Method to find out if a tag already exist. i.e. bondegård already exist. If it does we should use the id.
+     *
+     * @param tag to be saved
+     * @return String id
+     */
+    private String semanticExists(Tag tag) {
+
+        boolean found = false;
+        String check_sql = "select * from TAG where TAG.XLINK_TO LIKE ? AND TAG.tag_value LIKE ?";
+        try {
+            java.sql.PreparedStatement stmt = conn.prepareStatement(check_sql);
+            //stmt.setString(1, tag.getLink());
+            stmt.setString(1, "%/images/billed/2011/aug/billeder/%"); //'%/images/billed/2011/aug/billeder/%'
+            stmt.setString(2, "%" + tag.getTagText() + "%");
+            //preparedStatement.setString(2, "%Module=jvmRuntimeModule:freeMemory%");
+            //found = stmt.executeQuery().next();
+            //stmt.close();
+
+
+            java.util.ArrayList<Tag> tList = null;
+
+            java.sql.ResultSet result = stmt.executeQuery();
+            if (result != null) {
+
+                tList = new java.util.ArrayList<Tag>();
+                try {
+                    while (result.next()) {
+                        java.util.Calendar time = java.util.Calendar.getInstance();
+                        time.setTimeInMillis(result.getTimestamp("TIMESTAMP").getTime());
+                        Tag existingTag = new Tag(result.getString("ID"),
+                                result.getString("TAG_VALUE"),
+                                time,
+                                result.getString("XLINK_TO"),
+                                result.getString("CREATOR"));
+                        tList.add(existingTag);
+                    }
+                    result.close();
+                    stmt.close();
+                } catch (java.sql.SQLException sqlException) {
+                    logger.warn(sqlException.getCause().getMessage() + " msg: " + sqlException.getMessage());
+                }
+            }
+            if (tList.size() > 1) {
+                logger.warn("We received several instance of the same tag_value: " + tag.getTagText() + " for " + tag.getLink());
+                return null;
+            }else if (tList.size() == 1){
+                logger.debug("We received one instance of the same tag_value: " + tag.getTagText() );
+
+                return tList.get(0).getId();
+            } else{
+                logger.debug("Tag semantics doesnt exist!");
+                return null;
+            }
+
+
+        } catch (java.sql.SQLException sqlException) {
+            logger.warn(sqlException.getMessage());
+        }
+
+        return null;
 
     }
 
