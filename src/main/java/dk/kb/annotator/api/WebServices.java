@@ -1,7 +1,5 @@
 package dk.kb.annotator.api;
 
-//Log imports
-
 import dk.kb.annotator.database.DbReader;
 import dk.kb.annotator.database.DbWriter;
 import dk.kb.annotator.model.Annotation;
@@ -26,15 +24,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-// Jersey imports
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-// Java core imports
-// Local imports
-
 
 /**
  * Class that implements the API described in the README file of the project
@@ -50,9 +44,6 @@ public class WebServices {
 
     // Static logger object
     private static Logger logger = Logger.getLogger(WebServices.class);
-
-    // Database write handle 
-    private DbWriter dbWriter = null; //new DbWriter();
 
     // This is the database read handle
     private DbReader dbReader = null; //new DbReader();
@@ -108,7 +99,7 @@ public class WebServices {
                 comments = dbReader.readComments(modifiedSince, uri);
             } else {
                 // Read all annotaions
-                logger.debug(" Read all annotaions");
+                logger.debug(" Read all annotations");
                 try {
                     xlinks = dbReader.readXlinks(uri);
                     tags = dbReader.readTags(uri);
@@ -123,7 +114,7 @@ public class WebServices {
             // Create the atom feed
 
             logResultFromDB(xlinks, tags, comments);
-            dk.kb.annotator.model.AtomFeed atom = new dk.kb.annotator.model.AtomFeed("Annotations since "
+            AtomFeed atom = new AtomFeed("Annotations since "
                     + modifiedSince, comments, tags, xlinks); // todo: rethink this title
 
             setIDandLink(uri, null, headers, atom);
@@ -178,9 +169,9 @@ public class WebServices {
         if (isTest) { // Just for testing purpose
             return Response.ok().build();
         } else { // "real" case
-            ArrayList<dk.kb.annotator.model.Xlink> xlinks = new ArrayList<dk.kb.annotator.model.Xlink>();
-            ArrayList<dk.kb.annotator.model.Tag> tags = new ArrayList<dk.kb.annotator.model.Tag>();
-            ArrayList<dk.kb.annotator.model.Comment> comments = new ArrayList<dk.kb.annotator.model.Comment>();
+            ArrayList<Xlink> xlinks = new ArrayList<dk.kb.annotator.model.Xlink>();
+            ArrayList<Tag> tags = new ArrayList<dk.kb.annotator.model.Tag>();
+            ArrayList<Comment> comments = new ArrayList<Comment>();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  'at' HH:mm:ss z");
             if (modifiedSince != null) {
                 logger.debug(" all results, modifiedSince " + sdf.format(modifiedSince.getTime()));
@@ -190,7 +181,6 @@ public class WebServices {
                         xlinks = dbReader.readXlinks(modifiedSince, uri);
                         break;
                     case tag:
-
                         tags = dbReader.readTags(modifiedSince, uri);
                         break;
                     case comment:
@@ -297,7 +287,7 @@ public class WebServices {
         String host = headers.getRequestHeader(HttpHeaders.HOST).toString();
 
         // Instantiate read & write handles
-        dbWriter = new DbWriter();
+        DbWriter dbWriter = new DbWriter();
 
         Annotation annotation = null;
         // Current time
@@ -309,6 +299,7 @@ public class WebServices {
         }
         switch (type) {
             case tag:
+                logger.debug("Got a tag");
                 if (value.equals("")) {
                     return Response.status(Response.Status.BAD_REQUEST).build();
                 }
@@ -317,32 +308,30 @@ public class WebServices {
                 if (newTag != null) { // Tag succesfully written to db. todo flyttes til util klasse.
                     try {
                         URI permaUri = new URI(newTag.getId());
-                        dbWriter.dbClose();
                         return Response.created(permaUri).build();
                     } catch (java.net.URISyntaxException uriErr) {
                         logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());
-                        dbWriter.dbClose();
                         return Response.created(null).build();
                     }
                 }
             case tag_aerial:
+                logger.debug("Got an aerial tag");
                 if (value.equals("")) {
                     return Response.status(Response.Status.BAD_REQUEST).build();
                 }
-                annotation = new dk.kb.annotator.model.Tag("", value, rightNow, from, creator);
-                dk.kb.annotator.model.Annotation aerialTag = dbWriter.writeAerialTag((dk.kb.annotator.model.Tag) annotation);
+                annotation = new Tag("", value, rightNow, from, creator);
+                Annotation aerialTag = dbWriter.writeAerialTag((Tag) annotation);
                 if (aerialTag != null) { // Tag succesfully written to db. todo flyttes til util klasse.
                     try {
                         URI permaUri = new URI(aerialTag.getId());
-                        dbWriter.dbClose();
                         return Response.created(permaUri).build();
                     } catch (java.net.URISyntaxException uriErr) {
                         logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());
-                        dbWriter.dbClose();
                         return Response.created(null).build();
                     }
                 }
             case comment:
+                logger.debug("Got a comment");
                 if (value.equals("")) {
                     return Response.status(Response.Status.BAD_REQUEST).build();
                 }
@@ -351,17 +340,16 @@ public class WebServices {
                 if (newComment != null) { // Tag succesfully written to db
                     try {
                         URI permaUri = new URI(newComment.getId());
-                        dbWriter.dbClose();
                         return Response.created(permaUri).build();
                     } catch (java.net.URISyntaxException uriErr) {
                         logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());
-                        dbWriter.dbClose();
                         return Response.created(null).build();
                     }
                 } else {
                     return Response.serverError().build();
                 }
             case xlink:
+                logger.debug("Got an xlink");
                 if (role.equals("") || title.equals("") || to.equals("")) {
                     return Response.status(Response.Status.BAD_REQUEST).build();
                 }
@@ -372,20 +360,17 @@ public class WebServices {
                 if (newXlink != null) { // Tag successfully written to db
                     try {
                         URI permaUri = new URI(newXlink.getId());
-                        dbWriter.dbClose();
                         return Response.created(permaUri).build();
                     } catch (java.net.URISyntaxException uriErr) {
                         logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());
-                        dbWriter.dbClose();
                         return Response.created(null).build();
                     }
                 } else {
-                    dbWriter.dbClose();
                     return Response.serverError().build();
                 }
             default:
+                logger.debug("Hit the default case");
                 logger.warn("type is not being handled by the implementation! Type: " + type);
-                dbWriter.dbClose();
                 return Response.status(Response.Status.BAD_REQUEST).build();
 
         }
@@ -415,15 +400,4 @@ public class WebServices {
     return Response.ok().build();
     }
     */
-
-    /**
-     * logs the content of an atom feed. How many tags, xlinks and comments.
-     *
-     * @param atom
-     */
-    private void printListsInAtomFeed(dk.kb.annotator.model.AtomFeed atom) {
-        logger.trace("atom.getTags() = " + atom.getTags());
-        logger.trace("atom.getXlinks() = " + atom.getXlinks());
-        logger.trace("atom.getComments() = " + atom.getComments());
-    }
 }
