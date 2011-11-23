@@ -25,6 +25,8 @@ public class DbReader {
 
     private static final String SELECT_FROM = "SELECT * FROM ";
 
+    private static final String WHERE_ID_IS = " WHERE id = ? ORDER BY TIMESTAMP DESC ";
+
     private static final String WHERE_URI = " WHERE XLINK_TO=? ORDER BY TIMESTAMP DESC ";
 
     private static final String WHERE_URI_MODIFIED_SINCE = " WHERE XLINK_TO=? AND TIMESTAMP>=? " +
@@ -39,11 +41,11 @@ public class DbReader {
 
     }
 
-    public java.util.ArrayList<Xlink> readXlinks(String uri) {
-        return readXlinks(null, uri);
+    public java.util.ArrayList<Xlink> readXlinks(String uri, boolean getById) {
+        return readXlinks(null, getById, uri);
     }
 
-    public ArrayList<Xlink> readXlinks(Calendar createdBefore, String uri) {
+    public ArrayList<Xlink> readXlinks(Calendar createdBefore, boolean getById, String uri) {
 
         ArrayList<Xlink> xList = null;
         Connection conn = null;
@@ -56,7 +58,12 @@ public class DbReader {
                 return null;
             } else {
                 conn = Database.getConnection();
-                if (createdBefore != null) {
+
+                if (getById) {
+                  sql = SELECT_FROM + "XLINK" + WHERE_ID_IS;
+                  stmt = conn.prepareStatement(sql);
+                  stmt.setString(1,uri);
+                } else if (createdBefore != null) {
                     sql = SELECT_FROM + "XLINK" + WHERE_XLINK_URI_MODIFIED_SINCE;
 
                     stmt = conn.prepareStatement(sql);
@@ -122,8 +129,8 @@ public class DbReader {
     }
 
 
-    public ArrayList<Tag> readTags(String uri) {
-        return readTags(null, uri);
+    public ArrayList<Tag> readTags(String uri, boolean getById) {
+        return readTags(null, getById, uri);
     }
 
     /**
@@ -133,7 +140,7 @@ public class DbReader {
      * @param uri
      * @return
      */
-    public ArrayList<Tag> readTags(Calendar createdBefore, String uri) {
+    public ArrayList<Tag> readTags(Calendar createdBefore, boolean getById, String uri) {
 
         Connection conn = null;
         ArrayList<Tag> tList = null;
@@ -146,7 +153,11 @@ public class DbReader {
         } else {
             try {
                 conn = Database.getConnection();
-                if (createdBefore != null) {
+                if (getById) {
+                    sql = SELECT_FROM + "TAG" + WHERE_ID_IS;
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1,uri);
+                } else if (createdBefore != null) {
                     sql = SELECT_FROM + "TAG" + WHERE_URI_MODIFIED_SINCE;
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, uri);
@@ -211,7 +222,7 @@ public class DbReader {
      * @param uri
      * @return an ArrayList of Comment objects
      */
-    public ArrayList<Comment> readComments(Calendar createdBefore, String uri) {
+    public ArrayList<Comment> readComments(Calendar createdBefore, boolean getById, String uri) {
 
         ArrayList<Comment> cList = null;
         Connection conn = null;
@@ -223,7 +234,11 @@ public class DbReader {
                 return null;
             } else {
                 conn = Database.getConnection();
-                if (createdBefore != null) {
+                if (getById) {
+                    sql = SELECT_FROM + "COMMENTS" + WHERE_ID_IS;
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1,uri);
+                } else if (createdBefore != null) {
                     sql = SELECT_FROM + "COMMENTS" + WHERE_URI_MODIFIED_SINCE;
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, uri);
@@ -283,8 +298,10 @@ public class DbReader {
         return cList;
     }
 
-    public ArrayList<Comment> readComments(String uri) {
-        return readComments(null, uri);
+    public ArrayList<Comment> readComments(String uri, boolean getById) {
+        return readComments(null, getById, uri);
     }
+
+
 
 }

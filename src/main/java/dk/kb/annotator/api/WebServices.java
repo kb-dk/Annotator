@@ -64,6 +64,7 @@ public class WebServices {
     @Path("/")      // {uri}
     @Produces({"application/atom+xml", "application/xml", "application/json"})
     public Response getAnnotations(@QueryParam("uri") String uri,
+                                   @QueryParam("id") String id,
                                    @Context HttpHeaders headers) {
         logger.debug("GET (atom+xml) URI: " + uri);
 
@@ -78,6 +79,9 @@ public class WebServices {
             return  Response.ok().build();
         } else { // "real" case
 
+            boolean getById = (id != null && !"".equals(id));
+            if (getById) uri=id;
+
             //todo: move all logic to utility class
             ArrayList<dk.kb.annotator.model.Xlink> xlinks = null;
             ArrayList<dk.kb.annotator.model.Tag> tags = null;
@@ -88,16 +92,16 @@ public class WebServices {
             if (modifiedSince != null) {
                 logger.debug(" all results, modifiedSince " + sdf.format(modifiedSince.getTime()));
                 // Read all annotaions since 'modified since'
-                xlinks = dbReader.readXlinks(modifiedSince, uri);
-                tags = dbReader.readTags(modifiedSince, uri);
-                comments = dbReader.readComments(modifiedSince, uri);
+                xlinks = dbReader.readXlinks(modifiedSince,getById, uri);
+                tags = dbReader.readTags(modifiedSince,getById, uri);
+                comments = dbReader.readComments(modifiedSince,getById, uri);
             } else {
                 // Read all annotaions
                 logger.debug(" Read all annotations");
                 try {
-                    xlinks = dbReader.readXlinks(uri);
-                    tags = dbReader.readTags(uri);
-                    comments = dbReader.readComments(uri);
+                    xlinks = dbReader.readXlinks(uri,getById);
+                    tags = dbReader.readTags(uri,getById);
+                    comments = dbReader.readComments(uri,getById);
                     logResultFromDB(xlinks, tags, comments);
 
                 } catch (Exception e) {
@@ -146,16 +150,20 @@ public class WebServices {
     @Path("/{type}")
     @Produces({"application/atom+xml", "application/xml", "application/json"})
     public Response getAnnotations(@QueryParam("uri") String uri,
+                                   @QueryParam("id") String id,
                                    @PathParam("type") ApiUtils.annotationType type,
                                    @Context HttpHeaders headers) {
         logger.debug("GET (atom+xml) URI: " + uri + " type " + type);
         try {
-            uri = URLDecoder.decode(uri, "UTF-8");
+            if (uri != null) uri = URLDecoder.decode(uri, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-         logger.debug("GET (atom+xml) URI: " + uri + " type " + type);
+         logger.debug("GET (atom+xml) URI: " + uri + " type " + type+ "id "+id);
+        boolean getById = (id != null && !"".equals(id));
+        if (getById) uri=id;
+
         Calendar modifiedSince = ApiUtils.getModifiedSince(headers);
 
         dbReader = new DbReader();
@@ -172,13 +180,13 @@ public class WebServices {
                 // Read all annotations
                 switch (type) {
                     case xlink:
-                        xlinks = dbReader.readXlinks(modifiedSince, uri);
+                        xlinks = dbReader.readXlinks(modifiedSince, getById, uri);
                         break;
                     case tag:
-                        tags = dbReader.readTags(modifiedSince, uri);
+                        tags = dbReader.readTags(modifiedSince, getById, uri);
                         break;
                     case comment:
-                        comments = dbReader.readComments(modifiedSince, uri);
+                        comments = dbReader.readComments(modifiedSince, getById, uri);
                         break;
                     default:
                         logger.warn("type is not being handled by the implementation! Type: " + type);
@@ -188,15 +196,15 @@ public class WebServices {
                 switch (type) {
                     case xlink:
                         logger.debug(" XLINK readXlinks  from DB" + uri);
-                        xlinks = dbReader.readXlinks(uri);
+                        xlinks = dbReader.readXlinks(uri,getById);
                         break;
                     case tag:
                         logger.debug(" TAG readTags  from DB" + uri);
-                        tags = dbReader.readTags(uri);
+                        tags = dbReader.readTags(uri,getById);
                         break;
                     case comment:
                         logger.debug(" Comment readComments from DB" + uri);
-                        comments = dbReader.readComments(uri);
+                        comments = dbReader.readComments(uri,getById);
                         break;
                     default:
                         return Response.status(Response.Status.BAD_REQUEST).build();
