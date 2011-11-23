@@ -9,13 +9,7 @@ import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
 import org.apache.log4j.Logger;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -236,6 +230,19 @@ public class WebServices {
             }
         }
     }
+    @DELETE
+    @Path("/{type}")
+    public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type, @QueryParam(value="id") String id) {
+
+        logger.debug("deleting "+type+" id="+id);
+        DbWriter dbWriter = new DbWriter();
+        if (dbWriter.deleteAnnotation(type,id))
+            return Response.ok().build();
+        else
+            return Response.status(500).build();
+
+    }
+
 
     /**
      * Sets the id and link on a AtomFeed.
@@ -339,7 +346,7 @@ public class WebServices {
                 Annotation newComment = dbWriter.writeComment((Comment) annotation);
                 if (newComment != null) { // Tag succesfully written to db
                     try {
-                        URI permaUri = new URI(newComment.getId());
+                        URI permaUri = new URI("?id="+newComment.getId());
                         return Response.created(permaUri).build();
                     } catch (java.net.URISyntaxException uriErr) {
                         logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());

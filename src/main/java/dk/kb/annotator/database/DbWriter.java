@@ -1,11 +1,14 @@
 package dk.kb.annotator.database;
 
+import dk.kb.annotator.api.ApiUtils;
 import dk.kb.annotator.model.Annotation;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
 import org.apache.log4j.Logger;
+import org.apache.taglibs.standard.tag.common.core.CatchTag;
 
+import javax.servlet.jsp.tagext.TryCatchFinally;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -59,6 +62,15 @@ public class DbWriter {
             "update tag set " +
                     " XLINK_TO=?,CREATOR=?,TIMESTAMP=?,TAG_VALUE=? " +
                     "where ID=?";
+
+    // For deletion
+    private static final String DELETE_COMMENT =
+            "delete from comments where ID=?";
+    private static final String DELETE_TAG =
+            "delete from tag where ID=?";
+    private static final String DELETE_XLINK =
+            "delete from xlink where ID=?";
+
 
     // End of canned SQL
 
@@ -302,6 +314,54 @@ public class DbWriter {
 
         logger.info("Finished writing a comment...");
         return c;
+    }
+
+    public boolean deleteAnnotation(ApiUtils.annotationType type, String id) {
+
+        logger.debug("Deleting "+type+" id="+id);
+        PreparedStatement stmt = null;
+        Connection conn = null;
+
+        try {
+            conn = Database.getConnection();
+            switch (type) {
+                case comment :
+                    stmt = conn.prepareStatement(DELETE_COMMENT);
+                    stmt.setString(1,id);
+                    break;
+                case tag :
+                    stmt = conn.prepareStatement(DELETE_TAG);
+                    stmt.setString(1,id);
+                    break;
+                case xlink :
+                    stmt = conn.prepareStatement(DELETE_XLINK);
+                    stmt.setString(1,id);
+                    break;
+                default :
+                    logger.warn("delete annotation invalid type "+type);
+                    return false;
+            }
+            int wasExecuted = stmt.executeUpdate();
+            logger.info("wasExecuted = " + wasExecuted);
+            if (wasExecuted > 0) {
+                logger.debug("deleted "+type+" id="+id);
+                return true;
+            } else {
+                logger.debug(type+" id="+id+" not deleted");
+                return false;
+            }
+        } catch (SQLException e) {
+            logger.error("Error deleting "+type,e);
+            return false;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException sql) {
+                logger.warn(sql);
+                return false;
+            }
+        }
     }
 
     private boolean exists(String table, Annotation a) {
