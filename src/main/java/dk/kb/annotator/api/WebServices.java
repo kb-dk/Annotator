@@ -329,6 +329,7 @@ public class WebServices {
                         return Response.created(null).build();
                     }
                 }
+                break;
             case tag_aerial:
                 logger.debug("Got an aerial tag");
                 if (value.equals("")) {
@@ -344,6 +345,8 @@ public class WebServices {
                         logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());
                         return Response.created(null).build();
                     }
+                } else {
+                    return Response.status(Response.Status.BAD_REQUEST).build();
                 }
             case comment:
                 logger.debug("Got a comment");
@@ -389,6 +392,7 @@ public class WebServices {
                 return Response.status(Response.Status.BAD_REQUEST).build();
 
         }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
 

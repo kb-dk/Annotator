@@ -422,7 +422,7 @@ public class DbWriter {
             Connection conn = Database.getConnection();
             PreparedStatement stmt = conn.prepareStatement(check_sql);
             //stmt.setString(1, tag.getLink());
-            stmt.setString(1, "%/images/billed/2011/aug/billeder/%"); //'%/images/billed/2011/aug/billeder/%'
+            stmt.setString(1, "%/images/luftfo/2011/maj/luftfoto/%"); //'%/images/billed/2011/aug/billeder/%'
             stmt.setString(2, "%" + tag.getTagText() + "%");
             //preparedStatement.setString(2, "%Module=jvmRuntimeModule:freeMemory%");
             //found = stmt.executeQuery().next();
