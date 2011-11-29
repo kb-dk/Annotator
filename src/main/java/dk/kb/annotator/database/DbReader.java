@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
- * A class that writes to the database
+ * A class that Reads from the database
  *
  * @author Sigfrid Lundberg (slu@kb.dk)
  */
@@ -25,14 +25,14 @@ public class DbReader {
 
     private static final String SELECT_FROM = "SELECT * FROM ";
 
-    private static final String WHERE_ID_IS = " WHERE id = ? ORDER BY TIMESTAMP DESC ";
+    private static final String WHERE_ID_IS = " WHERE id = ? ORDER BY TIMESTAMP ASC ";
 
-    private static final String WHERE_URI = " WHERE XLINK_TO=? ORDER BY TIMESTAMP DESC ";
+    private static final String WHERE_URI = " WHERE XLINK_TO=? ORDER BY TIMESTAMP ASC ";
 
     private static final String WHERE_URI_MODIFIED_SINCE = " WHERE XLINK_TO=? AND TIMESTAMP>=? " +
             " ORDER BY TIMESTAMP DESC  ";
 
-    private static final String WHERE_XLINK_URI = " WHERE XLINK_FROM=? ORDER BY TIMESTAMP DESC ";
+    private static final String WHERE_XLINK_URI = " WHERE XLINK_FROM=? ORDER BY TIMESTAMP ASC ";
 
     private static final String WHERE_XLINK_URI_MODIFIED_SINCE = " WHERE XLINK_FROM=? AND TIMESTAMP>=? " +
             " ORDER BY TIMESTAMP DESC  ";

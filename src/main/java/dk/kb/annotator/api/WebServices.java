@@ -245,7 +245,7 @@ public class WebServices {
                                      @QueryParam(value="oid") String oid,
                                      @QueryParam(value="creator") String creator) {
 
-        logger.debug("deleting annotation "+type+" id="+id + " oid=" + oid + " creator=" +creator);
+        logger.debug("deleting annotation with creator and object id. "+type+" id="+id + " oid=" + oid + " creator=" +creator);
         DbWriter dbWriter = new DbWriter();
         if (dbWriter.deleteAnnotation(type,id, oid, creator))
             return Response.ok().build();
