@@ -240,7 +240,24 @@ public class WebServices {
     }
     @DELETE
     @Path("/{type}")
-    public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type, @QueryParam(value="id") String id) {
+    public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type,
+                                     @QueryParam(value="id") String id,
+                                     @QueryParam(value="oid") String oid,
+                                     @QueryParam(value="creator") String creator) {
+
+        logger.debug("deleting annotation "+type+" id="+id + " oid=" + oid + " creator=" +creator);
+        DbWriter dbWriter = new DbWriter();
+        if (dbWriter.deleteAnnotation(type,id, oid, creator))
+            return Response.ok().build();
+        else
+            return Response.status(500).build();
+
+    }
+
+    @DELETE
+    @Path("/{type}")
+    public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type,
+                                     @QueryParam(value="id") String id) {
 
         logger.debug("deleting "+type+" id="+id);
         DbWriter dbWriter = new DbWriter();

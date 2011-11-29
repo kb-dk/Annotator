@@ -55,8 +55,8 @@ public class DbWriter {
 
       private static final String INSERT_TAG_JOIN =
             "insert into tag_join " +
-                    "(OID, TID, id) " +
-                    "values (?,?,?)";
+                    "(OID, TID, creator, TIMESTAMP) " +
+                    "values (?,?,?,?)";
 
     private static final String UPDATE_TAG =
             "update tag set " +
@@ -68,6 +68,10 @@ public class DbWriter {
             "delete from comments where ID=?";
     private static final String DELETE_TAG =
             "delete from tag where ID=?";
+
+        private static final String DELETE_TAG_AERIAL =
+            "delete from tag_join where TID=? and OID=? and CREATOR=?";
+
     private static final String DELETE_XLINK =
             "delete from xlink where ID=?";
 
@@ -150,6 +154,7 @@ public class DbWriter {
                 stmt.setString(1, t.getLink());
                 stmt.setString(2, existingId);
                 stmt.setString(3, t.getCreator()[0]);
+                stmt.setTimestamp(4,  new Timestamp(t.getUpdated().getTimeInMillis()));
 
                 int wasExecuted = stmt.executeUpdate();
                 logger.info("wasExecuted = " + wasExecuted);
@@ -316,9 +321,17 @@ public class DbWriter {
         return c;
     }
 
-    public boolean deleteAnnotation(ApiUtils.annotationType type, String id) {
+    /**
+     * Delete Annotation
+     * @param type  must be tag, tag_aerial, comment or xlink
+     * @param id   alphanumeric id.
+     * @param oid  Object ID.
+     * @param creator Author of the tag. For security reasons we check if the author is the
+     * @return
+     */
+    public boolean deleteAnnotation(ApiUtils.annotationType type, String id, String oid, String creator){
 
-        logger.debug("Deleting "+type+" id="+id);
+        logger.debug("Deleting "+type+" id="+id + " oid=" +oid + " creator="+creator);
         PreparedStatement stmt = null;
         Connection conn = null;
 
@@ -332,6 +345,18 @@ public class DbWriter {
                 case tag :
                     stmt = conn.prepareStatement(DELETE_TAG);
                     stmt.setString(1,id);
+                    break;
+
+                case tag_aerial :
+                    if(oid==null || creator==null){
+                        logger.warn("no creator OR objectID provided");
+                        break;
+                    }
+                    stmt = conn.prepareStatement(DELETE_TAG_AERIAL);
+                    stmt.setString(1,id);
+                    stmt.setString(2,oid);
+                    stmt.setString(3,creator);
+
                     break;
                 case xlink :
                     stmt = conn.prepareStatement(DELETE_XLINK);
@@ -362,6 +387,10 @@ public class DbWriter {
                 return false;
             }
         }
+    }
+
+    public boolean deleteAnnotation(ApiUtils.annotationType type, String id) {
+         return deleteAnnotation(type, id, null, null);
     }
 
     private boolean exists(String table, Annotation a) {
