@@ -240,31 +240,35 @@ public class WebServices {
     }
     @DELETE
     @Path("/{type}")
+        @Produces({"application/atom+xml", "application/xml", "application/json"})
     public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type,
                                      @QueryParam(value="id") String id,
                                      @QueryParam(value="oid") String oid,
                                      @QueryParam(value="creator") String creator) {
 
-        logger.debug("deleting annotation with creator and object id. "+type+" id="+id + " oid=" + oid + " creator=" +creator);
         DbWriter dbWriter = new DbWriter();
-        if (dbWriter.deleteAnnotation(type,id, oid, creator))
-            return Response.ok().build();
-        else
+        if(id != null && !id.equals("") && oid != null && !oid.equals("") && creator !=null && !creator.equals("") ) {
+            logger.debug("deleting annotation with creator and object id. "+type+" id="+id + " oid=" + oid + " creator=" +creator);
+            if (dbWriter.deleteAnnotation(type,id, oid, creator))
+                return Response.ok().build();
+            else
+                return Response.status(500).build();
+
+        }else if (id != null && !id.equals("") ){
+            logger.debug("deleting "+type+" id="+id);
+
+            if (dbWriter.deleteAnnotation(type,id))
+                return Response.ok().build();
+            else
+                return Response.status(500).build();
+
+
+        }else{
+            logger.warn("Couldn't delete annotation.  "+type+" id="+id);
+
             return Response.status(500).build();
+        }
 
-    }
-
-    @DELETE
-    @Path("/{type}")
-    public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type,
-                                     @QueryParam(value="id") String id) {
-
-        logger.debug("deleting "+type+" id="+id);
-        DbWriter dbWriter = new DbWriter();
-        if (dbWriter.deleteAnnotation(type,id))
-            return Response.ok().build();
-        else
-            return Response.status(500).build();
 
     }
 
