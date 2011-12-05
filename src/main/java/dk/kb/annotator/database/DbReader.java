@@ -230,9 +230,9 @@ public class DbReader {
             try {
                 conn = Database.getConnection();
 
-                    sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid= '/images/luftfo/2011/maj/luftfoto/object77541' AND TAG_JOIN.TID=TAG.ID";
+                    sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid=  AND TAG_JOIN.TID=TAG.ID"; // '/images/luftfo/2011/maj/luftfoto/object77541'
                     stmt = conn.prepareStatement(sql);
-                    //stmt.setString(1,"'" +uri + "'");
+                    stmt.setString(1,"'" +uri + "'");
 
                 resultSet = stmt.executeQuery();
 
@@ -242,9 +242,9 @@ public class DbReader {
 
                     tList = new ArrayList<Tag>();
                     while (resultSet.next()) {
-                        logger.info( resultSet.getFetchSize() +" row id " +  resultSet.getRow());
+                        //logger.info( resultSet.getFetchSize() +" row id " +  resultSet.getRow());
 
-                         logger.info( "TID " + resultSet.getString("TID"));
+                        // logger.info( "TID " + resultSet.getString("TID"));
 
                         Calendar time = Calendar.getInstance();
                         //time.setTimeInMillis(resultSet.getTimestamp("TIMESTAMP").getTime());
