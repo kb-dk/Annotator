@@ -230,14 +230,15 @@ public class DbReader {
             try {
                 conn = Database.getConnection();
 
-                    sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid=  AND TAG_JOIN.TID=TAG.ID"; // '/images/luftfo/2011/maj/luftfoto/object77541'
+                    //sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid='/images/luftfo/2011/maj/luftfoto/object77541'  AND TAG_JOIN.TID=TAG.ID"; // '/images/luftfo/2011/maj/luftfoto/object77541'
+                    sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid LIKE ?  AND TAG_JOIN.TID=TAG.ID"; // '/images/luftfo/2011/maj/luftfoto/object77541'
                     stmt = conn.prepareStatement(sql);
-                    stmt.setString(1,"'" +uri + "'");
+                    stmt.setString(1,"%" +uri + "%");
 
                 resultSet = stmt.executeQuery();
 
                 if (resultSet != null) {
-                    logger.info( resultSet.getFetchSize());
+                   // logger.info( resultSet.getFetchSize());
 
 
                     tList = new ArrayList<Tag>();
