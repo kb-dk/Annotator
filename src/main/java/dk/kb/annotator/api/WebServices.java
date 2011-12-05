@@ -207,7 +207,7 @@ public class WebServices {
                         comments = dbReader.readComments(uri,getById);
                         break;
                     case tag_aerial:
-                        logger.debug(" TAG_AERIAL read tags from DB. NOT IMPLEMENTED YET!");
+                        logger.debug(" TAG_AERIAL read tags from DB.");
                         tags = dbReader.readAerialTags(id);
                         //throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
                         break;
