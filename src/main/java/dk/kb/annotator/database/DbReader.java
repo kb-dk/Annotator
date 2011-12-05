@@ -216,6 +216,78 @@ public class DbReader {
         return tList;
     }
 
+    public ArrayList<Tag> readAerialTags( String uri) {
+
+        Connection conn = null;
+        ArrayList<Tag> tList = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        String sql;
+
+        if (uri.equals("")) {
+            return null;
+        } else {
+            try {
+                conn = Database.getConnection();
+
+                    sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid= '/images/luftfo/2011/maj/luftfoto/object77541' AND TAG_JOIN.TID=TAG.ID";
+                    stmt = conn.prepareStatement(sql);
+                    //stmt.setString(1,"'" +uri + "'");
+
+                resultSet = stmt.executeQuery();
+
+                if (resultSet != null) {
+                    logger.info( resultSet.getFetchSize());
+
+
+                    tList = new ArrayList<Tag>();
+                    while (resultSet.next()) {
+                        logger.info( resultSet.getFetchSize() +" row id " +  resultSet.getRow());
+
+                         logger.info( "TID " + resultSet.getString("TID"));
+
+                        Calendar time = Calendar.getInstance();
+                        //time.setTimeInMillis(resultSet.getTimestamp("TIMESTAMP").getTime());
+                        Tag tag = new Tag(resultSet.getString("ID"),
+                                resultSet.getString("TAG_VALUE"),
+                                time,
+                                resultSet.getString("XLINK_TO"),
+                                resultSet.getString("CREATOR"));
+                        tList.add(tag);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.error(e);
+            } finally {
+                try {
+                    if (resultSet != null){
+                        resultSet.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (stmt != null){
+                        stmt.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (conn != null){
+                        conn.close();
+                    }
+                } catch (SQLException e) {
+                    logger.warn(e);
+                }
+            }
+        }
+
+        return tList;
+    }
+
     /**
      * Read comments from the COMMENTS database table
      * @param createdBefore

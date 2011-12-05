@@ -191,6 +191,10 @@ public class AtomFeed {
             case tag:
                 atom.setTitle("Tags for resource " + uri);
                 break;
+
+             case tag_aerial:
+                atom.setTitle("Tags for aerial resource " + uri);
+                break;
             default:
                 throw new UnsupportedOperationException("type is not being handled by the implementation! " + type);
         }
