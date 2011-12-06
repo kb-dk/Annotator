@@ -208,7 +208,7 @@ public class WebServices {
                         break;
                     case tag_aerial:
                         logger.debug(" TAG_AERIAL read tags from DB.");
-                        tags = dbReader.readAerialTags(id);
+                        tags = dbReader.readAerialTags(uri);
                         //throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
                         break;
                     default:

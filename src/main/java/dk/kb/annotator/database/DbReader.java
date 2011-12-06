@@ -216,15 +216,16 @@ public class DbReader {
         return tList;
     }
 
-    public ArrayList<Tag> readAerialTags( String uri) {
-
+    public ArrayList<Tag> readAerialTags(String uri) {
+        logger.debug("reading tags uri "  + uri );
         Connection conn = null;
         ArrayList<Tag> tList = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
         String sql;
 
-        if (uri.equals("")) {
+        if (uri == null || uri.equals("")) {
+            logger.warn("No uri provided");
             return null;
         } else {
             try {
