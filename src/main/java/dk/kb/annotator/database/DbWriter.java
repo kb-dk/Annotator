@@ -143,13 +143,14 @@ public class DbWriter {
     public Tag writeAerialTag(Tag t) {
 
         logger.info("Writing an aerial tag...");
-        String existingId = semanticExists(t);
+
+        Connection conn = Database.getConnection();
+        String existingId = semanticExists(t, conn);
         if (existingId != null && existingId.length() > 0) {
-            Connection conn = null;
+
             PreparedStatement stmt = null;
 
             try {
-                conn = Database.getConnection();
                 stmt = conn.prepareStatement(INSERT_TAG_JOIN);
                 stmt.setString(1, t.getLink());
                 stmt.setString(2, existingId);
@@ -164,7 +165,7 @@ public class DbWriter {
                 }
 
             } catch (SQLException sqlException) {
-                logger.warn(sqlException.getMessage());
+                logger.error(sqlException.getMessage(), sqlException);
                 t = null;
             } finally {
                 try {
@@ -182,10 +183,7 @@ public class DbWriter {
         } else if (writeTag(t) != null){ // existing tag doesn't exist.
             // create a relation between a copject to the recently inserted tag table.
             PreparedStatement stmt = null;
-            Connection conn = null;
-
             try {
-                conn = Database.getConnection();
                 stmt = conn.prepareStatement(INSERT_TAG_JOIN);
                 stmt.setString(1, t.getLink());
                 stmt.setString(2, t.getId());
@@ -444,26 +442,24 @@ public class DbWriter {
      * @param tag to be saved
      * @return String id
      */
-    private String semanticExists(Tag tag) {
+    private String semanticExists(Tag tag, Connection conn) {
+
+        PreparedStatement stmt = null;
+        ResultSet result = null;
 
         boolean found = false;
         String check_sql = "select * from TAG where TAG.XLINK_TO LIKE ? AND TAG.tag_value LIKE ?";
         try {
-            Connection conn = Database.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(check_sql);
-            //stmt.setString(1, tag.getLink());
+            stmt = conn.prepareStatement(check_sql);
             stmt.setString(1, "%/images/luftfo/2011/maj/luftfoto/%"); //'%/images/billed/2011/aug/billeder/%'
             stmt.setString(2, "%" + tag.getTagText() + "%");
-            //preparedStatement.setString(2, "%Module=jvmRuntimeModule:freeMemory%");
-            //found = stmt.executeQuery().next();
-            //stmt.close();
 
             ArrayList<Tag> tList = null;
 
-            ResultSet result = stmt.executeQuery();
+            result = stmt.executeQuery();
             if (result != null) {
 
-                tList = new java.util.ArrayList<Tag>();
+                tList = new ArrayList<Tag>();
                 try {
                     while (result.next()) {
                         Calendar time = Calendar.getInstance();
@@ -475,8 +471,7 @@ public class DbWriter {
                                 result.getString("CREATOR"));
                         tList.add(existingTag);
                     }
-                    result.close();
-                    stmt.close();
+
                 } catch (SQLException sqlException) {
                     logger.warn(sqlException.getCause().getMessage() + " msg: " + sqlException.getMessage());
                 }
@@ -492,14 +487,18 @@ public class DbWriter {
                 logger.debug("Tag semantics doesn't exist!");
                 return null;
             }
-
-
         } catch (SQLException sqlException) {
-            logger.warn(sqlException.getMessage());
+            logger.error(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                result.close();
+                stmt.close();
+            } catch (SQLException e) {
+                logger.warn(e.getMessage(), e);
+            }
         }
 
         return null;
-
     }
 
 }
