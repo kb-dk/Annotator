@@ -190,6 +190,7 @@ public class DbWriter {
                 stmt.setString(1, t.getLink());
                 stmt.setString(2, t.getId());
                 stmt.setString(3, t.getCreator()[0]);
+                stmt.setTimestamp(4,  new Timestamp(t.getUpdated().getTimeInMillis()));
                 int wasExecuted = stmt.executeUpdate();
 
                 if (wasExecuted > 0) {
