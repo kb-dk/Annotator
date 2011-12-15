@@ -452,7 +452,7 @@ public class DbWriter {
         try {
             stmt = conn.prepareStatement(check_sql);
             stmt.setString(1, "%/images/luftfo/2011/maj/luftfoto/%"); //'%/images/billed/2011/aug/billeder/%'
-            stmt.setString(2, "%" + tag.getTagText() + "%");
+            stmt.setString(2,  tag.getTagText().trim().toLowerCase() );
 
             ArrayList<Tag> tList = null;
 
