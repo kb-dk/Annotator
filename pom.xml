@@ -8,12 +8,19 @@
     <name>Annotator Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <dependencies>
+        <!-- test dependencies begin -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>3.0.6.RELEASE</version>
+        </dependency>
+        <!-- test dependencies end -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -26,16 +33,11 @@
             <version>1.9.1</version>
         </dependency>
         <dependency>
-    <groupId>com.sun.jersey</groupId>
+            <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
             <version>1.9.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.toolchain</groupId>
             <artifactId>jetty-version-maven-plugin</artifactId>
@@ -66,8 +68,43 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
+
     </dependencies>
     <build>
         <finalName>annotation</finalName>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.11</version>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <url>http://disdev-01:8080/manager</url>
+            <!-- Edit your Maven settings.xml file and under the <servers> element enter the following
+                  <server>
+                   <id>tomcat-test</id>
+                   <username>username</username>
+                   <password>password</password>
+                </server>
+                this will allow you to specify the connection settings for the tomcat you want to deploy stuff to.
+                    -->
+                    <server>tomcat-test</server>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>thirdparty</id>
+            <name>3rd party</name>
+            <url>http://code.kb.dk:8082/nexus/content/repositories/thirdparty</url>
+        </repository>
+    </repositories>
 </project>
