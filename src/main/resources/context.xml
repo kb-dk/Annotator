@@ -25,38 +25,23 @@
 
     <!-- Default set of monitored resources -->
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
-    <Resource name="jdbc/KBsannotationDB"
-				          auth="Container"
-				          type="javax.sql.DataSource"
-				          driverClassName="oracle.jdbc.OracleDriver"
-				          url="jdbc:oracle:thin:@udvikling2.kb.dk:1521:udvl2"
-				          username="luftfototest"
-				          password="luftfototest123"
-				          maxActive="30"
-				          maxIdle="10"
-				          maxWait="18"
-				          accessToUnderlyingConnectionAllowed="true"
-				          removeAbandoned="true"
-				          removeAbandonedTimeout="60"
-				          logAbandoned="true"
-				/>
+   <Resource name="jdbc/KBsannotationDB"
+                                  auth="Container"
+                                  type="javax.sql.DataSource"
+                                  driverClassName="oracle.jdbc.OracleDriver"
+                                  url="jdbc:oracle:thin:@udvikling2.kb.dk:1521:udvl2"
+                                  username="cop2"
+                                  password="cop2123"
+                                  maxActive="30"
+                                  maxIdle="20"
+                                  maxWait="18"
+                                  accessToUnderlyingConnectionAllowed="true"
+                                  removeAbandoned="true"
+                                  removeAbandonedTimeout="60"
+                                  logAbandoned="true"
+                        />
 
 
-						<Resource name="jdbc/KBsoracleDB"
-				          auth="Container"
-				          type="javax.sql.DataSource"
-				          driverClassName="oracle.jdbc.OracleDriver"
-				          url="jdbc:oracle:thin:@udvikling2.kb.dk:1521:udvl2"
-				          username="cop2"
-				          password="cop2123"
-				          maxActive="30"
-				          maxIdle="10"
-				          maxWait="18"
-				          accessToUnderlyingConnectionAllowed="true"
-				          removeAbandoned="true"
-				          removeAbandonedTimeout="60"
-				          logAbandoned="true"
-			/>
 
     <!-- Uncomment this to disable session persistence across Tomcat restarts -->
     <!--
