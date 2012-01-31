@@ -41,40 +41,22 @@
         <p>
         <span style="font-weight:bold">Hent nyeste version af koden</span><br/>
         <span style="font-style:italic">svn co http://code.kb.dk/home/svn/repos/Annotator/trunk <del>http://code.kb.dk/svn/luftfoto/trunk/annotator</del></span><br/>
-        
-        <span style="font-weight:bold">Kør test</span><br/>
-        <span style="font-style:italic">ant -Dprod=false test</span><br/>
-        
-        <span style="font-weight:bold">byg produktions instans</span><br/>
-        <span style="font-style:italic">ant -Dprod=true jar</span><br/>
-        
-        <span style="font-weight:bold">Installer start script</span><br/>
-        <span style="font-style:italic">scriptet ./scripts/annotatord installeres i /etc/init.d/annotatord samt i de runlevels hvor den skal starte</span><br/>
-        
+        <p>Producer en war fil via kommandoen: mvn install </p>
+        <p>Hudson Continous integration serveren bygger annotation engine, kan findes her  </p>
+
+
 	<span style="font-weight:bold">Opret tabller i databasen</span><br/>
-        <span style="font-style:italic">Køre sql script: scripts/annotator.sql</span><br/>
+        <span style="font-style:italic">Sker via Cop2-Backendens oprettelses script.</span><br/>
 
 	<span style="font-weight:bold">Indsæt testdatasæt (2 rækker i tags tabellen)</span><br/>
         <span style="font-style:italic">Køre sql script: scripts/annotator-tag.sql</span><br/>
 
-        <span style="font-weight:bold">Start service</span><br/>
-        <span style="font-style:italic">/etc/init.d/annotatord start</span><br/>
-        
-        <span style="font-weight:bold">Stop service</span><br/>
-        <span style="font-style:italic">/etc/init.d/annotatord stop</span><br/>
+
         
         </p>
         
         <h3>Konfiguration</h3>
-        <h4>Port nummer og miljø</h4>
-        <p>
-        Port nummer og miljø konfigureres i start scriptet <a href="http://code.kb.dk/cgi-bin/viewvc.cgi/luftfoto/trunk/annotator/scripts/annotatord?view=co">scripts/annotatord</a>. default port nummer er 8080.<br/>
-        Læs i øvrigt om konfiguration i scriptet selv. 
-        </p>
-        <h4>Oracle forbindelse</h4>
-        <p>
-        Oracle forbindelsen sker via JNDI, konfigureret i <a href="http://code.kb.dk/cgi-bin/viewvc.cgi/luftfoto/trunk/annotator/conf_env/jetty_prod.xml?view=co">Jetty.xml</a> (under folder conf_env)
-        </p>
+
         <h4>Logning</h4>
         <p>
         Konfiguration af logning via log4j. konfiguration foretages i filen <a href="http://code.kb.dk/cgi-bin/viewvc.cgi/luftfoto/trunk/annotator/conf_env/log4j_prod.xml?view=co">log4j_prod.xml</a>
