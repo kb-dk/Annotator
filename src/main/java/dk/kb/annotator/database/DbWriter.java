@@ -234,7 +234,7 @@ public class DbWriter {
                 stmt.setString(1, t.getLink());
                 stmt.setString(2, t.getCreator()[0]);
                 stmt.setTimestamp(3, new Timestamp(t.getUpdated().getTimeInMillis()));
-                stmt.setString(4, t.getTagText());
+                stmt.setString(4, t.getContent().getValue());
                 stmt.setString(5, t.getId());
             } else {
                 stmt = conn.prepareStatement(INSERT_TAG);
@@ -242,7 +242,7 @@ public class DbWriter {
                 stmt.setString(2, t.getLink());
                 stmt.setString(3, t.getCreator()[0]);
                 stmt.setTimestamp(4, new Timestamp(t.getUpdated().getTimeInMillis()));
-                stmt.setString(5, t.getTagText());
+                stmt.setString(5, t.getContent().getValue());
             }
             int wasExecuted = stmt.executeUpdate();
             logger.info("wasExecuted = " + wasExecuted);
@@ -452,7 +452,7 @@ public class DbWriter {
         try {
             stmt = conn.prepareStatement(check_sql);
             stmt.setString(1, "%/images/luftfo/2011/maj/luftfoto/%"); //'%/images/billed/2011/aug/billeder/%'
-            stmt.setString(2,  tag.getTagText().trim().toLowerCase() );
+            stmt.setString(2,  tag.getContent().getValue().trim().toLowerCase() );
 
             ArrayList<Tag> tList = null;
 
@@ -477,10 +477,10 @@ public class DbWriter {
                 }
             }
             if (tList.size() > 1) {
-                logger.warn("We received several instance of the same tag_value: " + tag.getTagText() + " for " + tag.getLink());
+                logger.warn("We received several instance of the same tag_value: " + tag.getContent().getValue() + " for " + tag.getLink());
                 return null;
             }else if (tList.size() == 1){
-                logger.debug("We received one instance of the same tag_value: " + tag.getTagText() );
+                logger.debug("We received one instance of the same tag_value: " + tag.getContent().getValue() );
 
                 return tList.get(0).getId();
             } else{

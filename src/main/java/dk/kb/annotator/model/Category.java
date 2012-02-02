@@ -20,6 +20,8 @@ public class Category {
 
     private String label = "";
 
+    private String author = "";
+
     public Category() {
     }
 
@@ -30,6 +32,12 @@ public class Category {
     public Category(String label, String term) {
         this.label = label;
         this.term = term;
+    }
+
+    public Category( String label,String term, String author) {
+        this.term = term;
+        this.label = label;
+        this.author = author;
     }
 
     @XmlAttribute
@@ -48,5 +56,14 @@ public class Category {
 
     public void setTerm(String term) {
         this.term = term;
+    }
+
+    @XmlAttribute
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

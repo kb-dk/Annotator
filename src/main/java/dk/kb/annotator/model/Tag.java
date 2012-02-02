@@ -3,7 +3,9 @@ package dk.kb.annotator.model;
 // JAXB
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Calendar;
 
 /**
  * A container for Tag data
@@ -17,7 +19,8 @@ public class Tag extends Annotation {
 
     private String id = "";
     private String tagText = "";
-    java.util.Calendar updated = null;
+   private Content content = null;
+    private Calendar updated = null;
     private String link = "";
     private String creator = "";
 
@@ -27,14 +30,14 @@ public class Tag extends Annotation {
     }
 
     public Tag(String id,
-               String text,
+               String content,
                java.util.Calendar updated,
                String link,
                String creator) {
         this.id = id;
-        this.tagText = text;
+        this.content = new Content(content);
         this.updated = updated;
-        this.link = link;
+        this.link =link;
         this.creator = creator;
     }
 
@@ -47,15 +50,6 @@ public class Tag extends Annotation {
         this.id = id;
     }
 
-    // Tagtext
-    @XmlElement(name = "tagText")  // ABW test denne
-    public String getTagText() {
-        return this.tagText;
-    }
-
-    public void setTagText(String text) {
-        this.tagText = text;
-    }
 
     // Updated
     public java.util.Calendar getUpdated() {
@@ -67,24 +61,30 @@ public class Tag extends Annotation {
     }
 
 
-    // Link
-    public String getLink() {
-        return this.link;
+    public Content getContent() {
+        return content;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setContent(Content content) {
+        this.content = content;
     }
 
     // Creator
-    public String[] getCreator() {
-        String[] ret = {this.creator};
-        return ret;
-    }
+public void setCreator(String creator) {
+    this.creator = creator;
+}
 
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
+/**
+ * Special get'er, used by JAXB marshalling
+ * XmlElementWrapper require it to return an Array
+ */
+@XmlElement(name = "name")
+@XmlElementWrapper(name = "author")
+public String[] getCreator() {
+    String[] ret = {this.creator};
+    return ret;
+}
+
 
     @Override
     public String toString() {
@@ -98,4 +98,11 @@ public class Tag extends Annotation {
     }
 
 
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
 }

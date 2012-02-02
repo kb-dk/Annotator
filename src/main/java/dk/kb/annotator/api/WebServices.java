@@ -116,16 +116,22 @@ public class WebServices {
                     + modifiedSince, comments, tags, xlinks); // todo: rethink this title
 
             setIDandLink(uri, null, headers, atom);
-            atom.initializeSingleTag();
+           // atom.initializeSingleTag();
             /* Return the the connections to the pool */
 
             if (!atom.isEmpty()) { // OK 
                 logger.debug("  return ok ");
                 return Response.ok(atom).build();
-            } else { //Not Modified
+            } else if( atom.isEmpty()){
+                logger.debug("No Content ");
+                return Response.noContent().build();
+            }
+              else
+             { //Not Modified
                 logger.debug("  return not modified");
                 return Response.notModified("Not Modified since " + modifiedSince).build();
             }
+
         }
     }
 
@@ -209,7 +215,6 @@ public class WebServices {
                     case tag_aerial:
                         logger.debug(" TAG_AERIAL read tags from DB.");
                         tags = dbReader.readAerialTags(uri);
-                        //throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
                         break;
                     default:
                         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -232,7 +237,7 @@ public class WebServices {
             lastUpdated.setTimeInMillis(ApiUtils.getLatestTimestamp(tmpList).getTime());
             atom.setUpdated(lastUpdated);
             atom.setTitleinAtomFeed(uri, type, atom);
-            atom.initializeSingleTag();
+           // atom.initializeSingleTag();
 
             if (atom != null) {
                 logger.debug(" return ok. hits: " + tmpList.size());

@@ -77,7 +77,7 @@ public class AtomFeed {
             String alleTags = "";
             for (Tag etTag : tags) {
 
-                Category etNytTag = new Category(etTag.getTagText(), "tag");
+                Category etNytTag = new Category(etTag.getContent().getValue(), "tag", etTag.getCreator()[0]);
                 tagsSomCategory.add(etNytTag);
                 alleTags += "'" + etNytTag.getLabel() + "' ";    // String with every tag appended. Used in the content element.
             }
@@ -87,7 +87,7 @@ public class AtomFeed {
             singleTag.setListOfTags(tagsSomCategory);
 
             singleTag.setContent(alleTagsCnt);
-            singleTag.setLink(new Link(tags.get(0).getLink())); // take the first tag in the list of tags and get the link.
+            //singleTag.setLink(new Link(tags.get(0).getLink())); // take the first tag in the list of tags and get the link.
 
         }
     }
@@ -161,6 +161,7 @@ public class AtomFeed {
         this.xlinks = xlinks;
     }
 
+    /*
     @XmlElement(name = "entry", type = TagEntry.class)
     public TagEntry getSingleTag() {
         return singleTag;
@@ -168,9 +169,9 @@ public class AtomFeed {
 
     public void setSingleTag(TagEntry singleTag) {
         this.singleTag = singleTag;
-    }
+    }   */
 
-    @XmlTransient
+    @XmlElement(name = "entry", type = Tag.class)
     public List<Tag> getTags() {
         return tags;
     }
