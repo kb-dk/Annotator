@@ -159,16 +159,22 @@ public class WebServices {
                                    @QueryParam("id") String id,
                                    @PathParam("type") ApiUtils.annotationType type,
                                    @Context HttpHeaders headers) {
-        logger.debug("GET (atom+xml) URI: " + uri + " type " + type);
         try {
             if (uri != null) uri = URLDecoder.decode(uri, "UTF-8");
         } catch (UnsupportedEncodingException e) {
+            logger.error(" URI: " + uri + " wrong encoded");
             e.printStackTrace();
         }
 
-         logger.debug("GET (atom+xml) URI: " + uri + " type " + type+ "id "+id);
+
         boolean getById = (id != null && !"".equals(id));
-        if (getById) uri=id;
+        if (getById){
+            uri=id;
+            logger.debug("GETTING Specific Annotation from id "+id +  " type " + type);
+        }
+        else{
+              logger.debug("GET  URI: " + uri + " type " + type);
+        }
 
         Calendar modifiedSince = ApiUtils.getModifiedSince(headers);
 
@@ -214,7 +220,7 @@ public class WebServices {
                         break;
                     case tag_aerial:
                         logger.debug(" TAG_AERIAL read tags from DB.");
-                        tags = dbReader.readAerialTags(uri);
+                        tags = dbReader.readAerialTags(uri, getById);
                         break;
                     default:
                         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -252,14 +258,12 @@ public class WebServices {
     @Path("/{type}")
         @Produces({"application/atom+xml", "application/xml", "application/json"})
     public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type,
-                                     @QueryParam(value="id") String id,
-                                     @QueryParam(value="oid") String oid,
-                                     @QueryParam(value="creator") String creator) {
+                                     @QueryParam(value = "id") String id) {
 
         DbWriter dbWriter = new DbWriter();
-        if(id != null && !id.equals("") && oid != null && !oid.equals("") && creator !=null && !creator.equals("") ) {
-            logger.debug("deleting annotation with creator and object id. "+type+" id="+id + " oid=" + oid + " creator=" +creator);
-            if (dbWriter.deleteAnnotation(type,id, oid, creator))
+        if(id != null && !id.equals("") ) {
+            logger.debug("deleting annotation with creator and object id. "+type+" id="+id );
+            if (dbWriter.deleteAnnotation(type,id))
                 return Response.ok().build();
             else
                 return Response.status(500).build();

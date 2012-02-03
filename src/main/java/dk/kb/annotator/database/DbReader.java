@@ -216,7 +216,7 @@ public class DbReader {
         return tList;
     }
 
-    public ArrayList<Tag> readAerialTags(String uri) {
+    public ArrayList<Tag> readAerialTags(String uri, boolean getById) {
         logger.debug("reading tags uri "  + uri );
         Connection conn = null;
         ArrayList<Tag> tList = null;
@@ -231,11 +231,17 @@ public class DbReader {
             try {
                 conn = Database.getConnection();
 
+                if(getById){     // SELECT a Single tag
+                    sql = "SELECT * FROM TAG, TAG_JOIN WHERE tag_join.tid LIKE ? AND TAG_JOIN.TID=TAG.ID"; // '/images/luftfo/2011/maj/luftfoto/object77541'
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1,"%" +uri + "%");
+                    logger.debug("Getting A SPECIFIC TAG");
+                }else{
                     //sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid='/images/luftfo/2011/maj/luftfoto/object77541'  AND TAG_JOIN.TID=TAG.ID"; // '/images/luftfo/2011/maj/luftfoto/object77541'
                     sql = "SELECT * FROM TAG_JOIN, TAG WHERE tag_join.oid LIKE ?  AND TAG_JOIN.TID=TAG.ID"; // '/images/luftfo/2011/maj/luftfoto/object77541'
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1,"%" +uri + "%");
-
+                }
                 resultSet = stmt.executeQuery();
 
                 if (resultSet != null) {

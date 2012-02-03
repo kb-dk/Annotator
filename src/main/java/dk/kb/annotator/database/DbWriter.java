@@ -71,6 +71,8 @@ public class DbWriter {
 
         private static final String DELETE_TAG_AERIAL =
             "delete from tag_join where TID=? and OID=? and CREATOR=?";
+            private static final String DELETE_TAG_AERIAL_SIMPLE =
+            "delete from tag_join where TID=?";
 
     private static final String DELETE_XLINK =
             "delete from xlink where ID=?";
@@ -347,14 +349,14 @@ public class DbWriter {
                     break;
 
                 case tag_aerial :
-                    if(oid==null || creator==null){
+                   /* if(oid==null || creator==null){
                         logger.warn("no creator OR objectID provided");
                         break;
-                    }
-                    stmt = conn.prepareStatement(DELETE_TAG_AERIAL);
+                    }*/
+                    stmt = conn.prepareStatement(DELETE_TAG_AERIAL_SIMPLE);
                     stmt.setString(1,id);
-                    stmt.setString(2,oid);
-                    stmt.setString(3,creator);
+                    //stmt.setString(2,oid);
+                    //stmt.setString(3,creator);
 
                     break;
                 case xlink :
