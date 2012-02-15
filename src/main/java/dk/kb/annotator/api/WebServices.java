@@ -195,8 +195,10 @@ public class WebServices {
                         xlinks = dbReader.readXlinks(modifiedSince, getById, uri);
                         break;
                     case tag:
-                        tags = dbReader.readTags(modifiedSince, getById, uri);
-                        break;
+                        //tags = dbReader.readTags(modifiedSince, getById, uri);
+                        throw new UnsupportedOperationException("Not yet implemented, ABWE should do this asap");
+                        //return Response.status(Response.Status.BAD_REQUEST).build();
+
                     case comment:
                         comments = dbReader.readComments(modifiedSince, getById, uri);
                         break;
@@ -210,14 +212,16 @@ public class WebServices {
                         logger.debug(" XLINK readXlinks  from DB" + uri);
                         xlinks = dbReader.readXlinks(uri,getById);
                         break;
-                    case tag:
-                        logger.debug(" TAG readTags  from DB" + uri);
-                        tags = dbReader.readTags(uri,getById);
-                        break;
+
                     case comment:
                         logger.debug(" Comment readComments from DB" + uri);
                         comments = dbReader.readComments(uri,getById);
                         break;
+
+                     case tag:
+                        logger.debug(" retrieving TAGs, Forwarding to tag_aerial for " + uri);
+                        //tags = dbReader.readTags(uri,getById);
+                        //break;
                     case tag_aerial:
                         logger.debug(" TAG_AERIAL read tags from DB.");
                         tags = dbReader.readAerialTags(uri, getById);
