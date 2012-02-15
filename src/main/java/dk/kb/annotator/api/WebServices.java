@@ -46,9 +46,9 @@ public class WebServices {
     @Path("/hello")
     @Produces(MediaType.TEXT_PLAIN)
     public String sayHello() {
-        logger.info("sayHello");
+        logger.info("Annotation Engine greets you");
 
-        return "Hello Jersey";
+        return "Annotation Engine greets you";
     }
 
     //----------- Read (GET) methods of our REST Api---------------//
@@ -350,21 +350,6 @@ public class WebServices {
         switch (type) {
             case tag:
                 logger.debug("Got a tag");
-                if (value.equals("")) {
-                    return Response.status(Response.Status.BAD_REQUEST).build();
-                }
-                annotation = new Tag("", value, rightNow, from, creator);
-                Annotation newTag = dbWriter.writeTag((Tag) annotation);
-                if (newTag != null) { // Tag succesfully written to db. todo flyttes til util klasse.
-                    try {
-                        URI permaUri = new URI(newTag.getId());
-                        return Response.created(permaUri).build();
-                    } catch (java.net.URISyntaxException uriErr) {
-                        logger.warn("could nor parse URI returned by dbwriter. Error is: " + uriErr.getMessage());
-                        return Response.created(null).build();
-                    }
-                }
-                break;
             case tag_aerial:
                 logger.debug("Got an aerial tag");
                 if (value.equals("")) {
@@ -427,7 +412,7 @@ public class WebServices {
                 return Response.status(Response.Status.BAD_REQUEST).build();
 
         }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        //return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
 
