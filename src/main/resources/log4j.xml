@@ -27,7 +27,7 @@
 
 	<!-- This classes local logger -->
 	<logger name="dk.kb">
-	  <level value="debug"/>
+	  <level value="info"/>
 	  <appender-ref ref="file" />
 	</logger>
 
