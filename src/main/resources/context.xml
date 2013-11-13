@@ -29,7 +29,7 @@
                                   auth="Container"
                                   type="javax.sql.DataSource"
                                   driverClassName="oracle.jdbc.OracleDriver"
-                                  url="jdbc:oracle:thin:@udvikling2.kb.dk:1521:udvl2"
+                                  url="jdbc:oracle:thin:@oracle-03.kb.dk:1521:PROD3"
                                   username="cop2"
                                   password="cop2123"
                                   maxActive="30"

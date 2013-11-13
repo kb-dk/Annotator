@@ -9,9 +9,9 @@
      <Arg>
       <New class="com.mchange.v2.c3p0.ComboPooledDataSource">
          <Set name="driverClass">oracle.jdbc.driver.OracleDriver</Set>
-         <Set name="jdbcUrl">jdbc:oracle:thin:@udvikling2.kb.dk:1521:udvl2</Set>
-         <Set name="user">luftfototest</Set>
-         <Set name="password">luftfototest123</Set>
+         <Set name="jdbcUrl">jdbc:oracle:thin:@oracle-03.kb.dk:1521:PROD3</Set>
+         <Set name="user">cop2</Set>
+         <Set name="password">cop2123</Set>
          </New>
      </Arg>
     </New>
