@@ -7,8 +7,13 @@ import dk.kb.annotator.model.AtomFeed;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
+import dk.kb.annotator.util.AMQBean;
+import dk.kb.annotator.util.JMSProducer;
 import org.apache.log4j.Logger;
 
+import javax.jms.JMSException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -264,24 +269,27 @@ public class WebServices {
     public Response deleteAnnotation(@PathParam("type") ApiUtils.annotationType type,
                                      @QueryParam(value = "id") String id) {
 
+        logger.debug("deleting annotation "+type+" "+id);
         DbWriter dbWriter = new DbWriter();
+        dbReader = new DbReader();
         if(id != null && !id.equals("") ) {
+            String oid = null;
+            switch (type) {
+                case tag_aerial:
+                    oid = dbReader.getObjectIdFromTagId(id);
+                    break;
+                case comment:
+                    oid = dbReader.getObjectIdFromCommentId(id);
+                    break;
+            }
             logger.debug("deleting annotation with creator and object id. "+type+" id="+id );
-            if (dbWriter.deleteAnnotation(type,id))
+            if (dbWriter.deleteAnnotation(type,id)) {
+                sendToSolrizr(oid);
                 return Response.ok().build();
-            else
+            } else
                 return Response.status(500).build();
 
-        }else if (id != null && !id.equals("") ){
-            logger.debug("deleting "+type+" id="+id);
-
-            if (dbWriter.deleteAnnotation(type,id))
-                return Response.ok().build();
-            else
-                return Response.status(500).build();
-
-
-        }else{
+        } else{
             logger.warn("Couldn't delete annotation.  "+type+" id="+id);
 
             return Response.status(500).build();
@@ -362,6 +370,7 @@ public class WebServices {
                 annotation = new Tag("", value, rightNow, from, creator);
                 Annotation aerialTag = dbWriter.writeAerialTag((Tag) annotation);
                 if (aerialTag != null) { // Tag succesfully written to db. todo flyttes til util klasse.
+                    this.sendToSolrizr(from);
                     try {
                         URI permaUri = new URI(aerialTag.getId());
                         return Response.created(permaUri).build();
@@ -379,6 +388,7 @@ public class WebServices {
                 }
                 annotation = new Comment("", value, rightNow, from, creator, "http://" + host.replace("[", "").replace("]", "") + "/" + uriInfo.getAbsolutePath().getRawPath());
                 Annotation newComment = dbWriter.writeComment((Comment) annotation);
+                this.sendToSolrizr(from);
                 if (newComment != null) { // Tag succesfully written to db
                     try {
                         URI permaUri = new URI("?id="+newComment.getId());
@@ -398,7 +408,6 @@ public class WebServices {
                 // todo: make role one of ApiUtils.AnnotationRole
                 annotation = new Xlink("", role + "", title, "simple", rightNow, to, from, creator);
                 Annotation newXlink = dbWriter.writeXlink((Xlink) annotation);
-
                 if (newXlink != null) { // Tag successfully written to db
                     try {
                         URI permaUri = new URI(newXlink.getId());
@@ -443,4 +452,21 @@ public class WebServices {
     return Response.ok().build();
     }
     */
+
+    private void sendToSolrizr(String uri) {
+        try {
+            javax.naming.Context initialContext = new InitialContext();
+            AMQBean datasource = (AMQBean) initialContext.lookup("java:comp/env/bean/AMQBeanFactory");
+            logger.debug("sending "+uri+" to "+datasource.getHost());
+            JMSProducer producer = new JMSProducer(
+                    datasource.getHost(),
+                    datasource.getUpdateQueue());
+            producer.sendMessage(uri);
+            producer.shutDownPRoducer();
+        } catch (NamingException e) {
+            logger.error("Unable to initialize context ",e);
+        } catch (JMSException e) {
+            logger.error("Unable to create JMSProducer ",e);
+        }
+    }
 }

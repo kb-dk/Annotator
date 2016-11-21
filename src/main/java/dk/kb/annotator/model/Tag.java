@@ -19,7 +19,7 @@ public class Tag extends Annotation {
 
     private String id = "";
     private String tagText = "";
-   private Content content = null;
+    private Content content = null;
     private Calendar updated = null;
     private String link = "";
     private String creator = "";
