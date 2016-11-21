@@ -383,5 +383,87 @@ public class DbReader {
     }
 
 
+    public String getObjectIdFromTagId(String tag_id) {
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+        Connection conn = null;
+        String sql = "SELECT * FROM tag_join WHERE tid = ?";
+        String oid = null;
+        try {
+            conn = Database.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1,tag_id);
+            result = stmt.executeQuery();
+            if (result.next()) {
+              oid = result.getString("OID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (result != null){
+                    result.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (stmt != null){
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (conn != null){
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
+        }
+        return oid;
+    }
 
+    public String getObjectIdFromCommentId(String comment_id) {
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+        Connection conn = null;
+        String sql = "SELECT * FROM comments WHERE id = ?";
+        String oid = null;
+        try {
+            conn = Database.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1,comment_id);
+            result = stmt.executeQuery();
+            if (result.next()) {
+                oid = result.getString("XLINK_TO");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (result != null){
+                    result.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (stmt != null){
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (conn != null){
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
+        }
+        return oid;
+    }
 }
