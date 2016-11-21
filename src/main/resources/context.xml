@@ -40,6 +40,11 @@
                                   removeAbandonedTimeout="60"
                                   logAbandoned="true"
                         />
+    <Resource name="bean/AMQBeanFactory" auth="container" type="dk.kb.annotator.util.AMQBean"
+              factory="org.apache.naming.factory.BeanFactory"
+              host="tcp://10.1.6.140:61616"
+              updateQueue="dk.kb.solrizr.update"/>
+
 
 
 
