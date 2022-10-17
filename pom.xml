@@ -16,17 +16,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.0.6.RELEASE</version>
-        </dependency>
-        <!-- test dependencies end -->
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
-
             <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-bundle</artifactId>
@@ -37,16 +30,10 @@
             <artifactId>jersey-server</artifactId>
             <version>1.9.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.eclipse.jetty.toolchain</groupId>
             <artifactId>jetty-version-maven-plugin</artifactId>
             <version>1.0.6</version>
-        </dependency>
-        <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
         </dependency>
 
 
@@ -68,11 +55,6 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-all</artifactId>
-            <version>5.14.1</version>
-        </dependency>
 
     </dependencies>
     <build>
@@ -92,14 +74,6 @@
                 <version>1.1</version>
                 <configuration>
                     <url>http://disdev-01:8080/manager</url>
-            <!-- Edit your Maven settings.xml file and under the <servers> element enter the following
-                  <server>
-                   <id>tomcat-test</id>
-                   <username>username</username>
-                   <password>password</password>
-                </server>
-                this will allow you to specify the connection settings for the tomcat you want to deploy stuff to.
-                    -->
                     <server>tomcat-test</server>
                 </configuration>
             </plugin>

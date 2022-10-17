@@ -11,11 +11,11 @@ import java.sql.SQLException;
 
 public final class Database {
 
-    private static Logger logger = Logger.getLogger(Database.class);
+    private static final Logger logger = Logger.getLogger(Database.class);
 
     public Database() {}
 
-    public static java.sql.Connection getConnection() {
+    public static Connection getConnection() {
 
     String DATASOURCE_CONTEXT = "java:comp/env/jdbc/KBsannotationDB";
 
