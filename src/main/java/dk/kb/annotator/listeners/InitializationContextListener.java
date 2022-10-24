@@ -7,10 +7,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.logging.LogManager;
 
 public class InitializationContextListener implements ServletContextListener {
     private static final Logger logger = Logger.getLogger(InitializationContextListener.class);

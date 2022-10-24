@@ -2,6 +2,7 @@ package dk.kb.annotator.model;
 
 // JAXB
 
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 

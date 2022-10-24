@@ -6,9 +6,7 @@ import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
 import org.apache.log4j.Logger;
-import org.apache.taglibs.standard.tag.common.core.CatchTag;
 
-import javax.servlet.jsp.tagext.TryCatchFinally;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;

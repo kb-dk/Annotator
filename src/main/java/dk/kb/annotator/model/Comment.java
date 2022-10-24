@@ -3,6 +3,7 @@ package dk.kb.annotator.model;
 // JAXB
 
 import javax.xml.bind.annotation.*;
+
 import java.util.Calendar;
 
 /**

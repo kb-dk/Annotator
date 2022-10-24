@@ -3,11 +3,12 @@ package dk.kb.annotator.model;
 // JAXB
 
 import dk.kb.annotator.api.ApiUtils;
-import org.apache.log4j.Logger;
-
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlValue;
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
