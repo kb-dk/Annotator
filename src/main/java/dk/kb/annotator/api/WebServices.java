@@ -448,6 +448,7 @@ public class WebServices {
     }
     */
 
+    //TODO: call solrizr service in cop Backdn
     private void sendToSolrizr(String uri) {
         logger.debug("TODO: call solrizer "+uri);
     }
