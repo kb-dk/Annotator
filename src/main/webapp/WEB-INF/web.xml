@@ -28,10 +28,6 @@
   <res-auth>Container</res-auth>
 </resource-ref>
 
-	<resource-env-ref>
-		<description>Configuration for AMQ connection</description>
-		<resource-env-ref-name>bean/AMQBeanFactory</resource-env-ref-name>
-		<resource-env-ref-type>dk.kb.annotator.util.AMQBean</resource-env-ref-type>
-	</resource-env-ref>
+
 </web-app>
 
