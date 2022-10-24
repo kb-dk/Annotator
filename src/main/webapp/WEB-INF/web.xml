@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns="http://java.sun.com/xml/ns/javaee"
-            xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-            xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
                                 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-            id="Annotator"
-            version="2.5">
-<display-name>annotation</display-name>
-<servlet>
-     <servlet-name>Jersey Web Application</servlet-name>
-      <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-			<init-param>
-					<param-name>com.sun.jersey.config.property.packages</param-name>
-					<param-value>dk.kb.annotator.api</param-value>
-			</init-param>
-			<load-on-startup>1</load-on-startup>
-	</servlet>
-<servlet-mapping>
-     <servlet-name>Jersey Web Application</servlet-name>
-	     <url-pattern>/*</url-pattern>
-</servlet-mapping>
+         id="Annotator"
+         version="2.5">
+    <display-name>annotation</display-name>
+    <listener>
+        <listener-class>dk.kb.annotator.listeners.InitializationContextListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>Jersey Web Application</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>dk.kb.annotator.api</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Jersey Web Application</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
 
 
-<resource-ref>
-  <res-ref-name>jdbc/KBsannotationDB</res-ref-name>
-      <res-type>javax.sql.DataSource</res-type>
-  <res-auth>Container</res-auth>
-</resource-ref>
+    <resource-ref>
+        <res-ref-name>jdbc/KBsannotationDB</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
 
 
 </web-app>
