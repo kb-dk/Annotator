@@ -41,7 +41,7 @@ public class DbReader {
 
     }
 
-    public java.util.ArrayList<Xlink> readXlinks(String uri, boolean getById) {
+    public ArrayList<Xlink> readXlinks(String uri, boolean getById) {
         return readXlinks(null, getById, uri);
     }
 

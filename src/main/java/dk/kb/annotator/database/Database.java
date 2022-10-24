@@ -1,13 +1,13 @@
 package dk.kb.annotator.database;
 
+import dk.kb.annotator.config.ServiceConfig;
 import org.apache.log4j.Logger;
+import org.postgresql.Driver;
+import org.postgresql.ds.PGSimpleDataSource;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public final class Database {
 
@@ -16,34 +16,18 @@ public final class Database {
     public Database() {}
 
     public static Connection getConnection() {
+		PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        Properties props = Driver.parseURL("",null);
+        dataSource.setServerNames(new String[]{ServiceConfig.getDatabaseHost()});
+        dataSource.setPortNumbers(new int[]{ServiceConfig.getDatabasePort()});
+        dataSource.setUser(ServiceConfig.getDatabaseUser());
+        dataSource.setPassword(ServiceConfig.getDatabasePassword());
+        try {
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-    String DATASOURCE_CONTEXT = "java:comp/env/jdbc/KBsannotationDB";
-
-    
-	Connection conn = null;
-
-	try {
-	
-	    Context initialContext = new InitialContext();
-     
-	    DataSource datasource = (DataSource)initialContext.lookup(DATASOURCE_CONTEXT);
-	    if (datasource != null) {
-		    conn = datasource.getConnection();
-            logger.info(" Database Connection established");
-
-	    } else {
-		    logger.debug("Failed to lookup datasource.");
-	    }
-      
-	}
-	catch ( NamingException ex ) {
-	    logger.error("Naming ex - Cannot get connection: " + ex);
-	}
-	catch(SQLException ex){
-	    logger.error("SQL ex - Cannot get connection: " + ex);
-        ex.printStackTrace();
-	}
-	return conn;
 
     }
 }
