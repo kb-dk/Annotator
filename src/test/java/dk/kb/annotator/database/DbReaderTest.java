@@ -7,6 +7,7 @@ import dk.kb.annotator.model.*;
 import org.junit.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,11 +20,11 @@ public class DbReaderTest {
     @BeforeClass
     public static void setupDatabase() throws FileNotFoundException {
         ServiceConfig.initialize(new FileInputStream("src/test/resources/annotator.properties"));
-        AddAnXLinkToTest();
-        AddATagToTest();
+        AddAnXLinkForTesting();
+        AddATagForTesting();
     }
 
-    public static void AddAnXLinkToTest() {
+    public static void AddAnXLinkForTesting() {
         DbWriter dbWriter = new DbWriter();
         Xlink xLink = new Xlink();
         xLink.setId("xlink1");
@@ -47,7 +48,7 @@ public class DbReaderTest {
         dbWriter.writeXlink(xLink);
     }
 
-    public static void AddATagToTest() {
+    public static void AddATagForTesting() {
         DbWriter dbWriter = new DbWriter();
         Tag tag = new Tag();
         tag.setId("tag1");
@@ -67,22 +68,42 @@ public class DbReaderTest {
     public void testGetXlinkById() {
         DbReader dbReader = new DbReader();
         List<Xlink> result = dbReader.readXlinks("xlink1",true);
-        System.out.println(result);
+        System.out.println("From testGetXlinkById:" + result);
+        assertEquals(1, result.size());
     }
 
     @Test
     public void testGetXlinkByUri() {
         DbReader dbReader = new DbReader();
         List<Xlink> result = dbReader.readXlinks("/test/test/test",false);
+        System.out.println("From testGetXlinkByUri:");
         result.forEach(System.out::println);
+        assertEquals(1, result.size());
     }
 
     @Test
     public void testGetTagByUri() {
         DbReader dbReader = new DbReader();
         List<Tag> result = dbReader.readTags("tag1",true);
-        System.out.println(result);
+        System.out.println("From testGetTagByUri:" + result);
         assertEquals(1, result.size());
+    }
+    @Test
+    public void testGetAerialTagByUri() {
+        DbReader dbReader = new DbReader();
+        List<Tag> result = dbReader.readAerialTags("/test/test/test",false);
+        System.out.println("From testGetTagByUri:" + result);
+        assertTrue(result.size() >= 1);
+    }
+
+    @Test
+    public void testGetTagByCreatedBefore() {
+        DbReader dbReader = new DbReader();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        List<Tag> result = dbReader.readTags(calendar, false, "/test/test/test");
+        System.out.println("From testGetTagByCreatedBefore" + calendar + ":" + result);
+        assertTrue(result.size() >= 1);
     }
 
     @AfterClass
