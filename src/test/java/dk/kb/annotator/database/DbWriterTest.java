@@ -56,7 +56,7 @@ public class DbWriterTest {
     }
 
     @Test
-    public void testWriteAerialTag(){
+    public void testWriteAerialTag(){ // TODO add creator and timestamp to tag_join table and test again
         DbWriter dbWriter = new DbWriter();
         DbReader dbReader = new DbReader();
 
@@ -73,12 +73,64 @@ public class DbWriterTest {
 
         dbWriter.writeAerialTag(tag);
 
+        ArrayList<Tag> tags = dbReader.readAerialTags(tag.getId(), true);
+        System.out.println(tags);
+
+        assertEquals(1, tags.size());
+
+        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag_aerial"), tag.getId());
+    }
+
+    @Test
+    public void testWriteTag(){
+        DbWriter dbWriter = new DbWriter();
+        DbReader dbReader = new DbReader();
+
+        Tag tag = new Tag();
+        tag.setId("tag1");
+        Content content = new Content();
+        content.setType("text");
+        content.setValue("Value1");
+        tag.setContent(content);
+        tag.setLink("/test/test/test");
+        tag.setCreator("Test");
+        Calendar calendar2 = Calendar.getInstance();
+        tag.setUpdated(calendar2);
+
+        dbWriter.writeTag(tag);
+
         ArrayList<Tag> tags = dbReader.readTags(tag.getId(), true);
         System.out.println(tags);
 
         assertEquals(1, tags.size());
 
         dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag"), tag.getId());
+    }
+
+    @Test
+    public void testWriteComment(){ // TODO add timestamp column to comment table in the database and test again
+        DbWriter dbWriter = new DbWriter();
+        DbReader dbReader = new DbReader();
+
+        Comment comment = new Comment();
+        comment.setId("comment1");
+        Content content = new Content();
+        content.setType("text");
+        content.setValue("Value1");
+        comment.setContent(content);
+        comment.setUpdated(Calendar.getInstance());
+        comment.setLink("/images/luftfo/2011/maj/luftfoto/object139050");
+        comment.setCreator("test");
+        comment.setHostUri("http://cop-02.kb.dk:8080//annotation/comment");
+
+        dbWriter.writeComment(comment);
+
+        ArrayList<Comment> comments = dbReader.readComments(comment.getId(), true);
+        System.out.println(comments);
+
+        assertEquals(1, comments.size());
+
+        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("comment"), comment.getId());
     }
 
 
