@@ -20,11 +20,11 @@ public class DbReaderTest {
     @BeforeClass
     public static void setupDatabase() throws FileNotFoundException {
         ServiceConfig.initialize(new FileInputStream("src/test/resources/annotator.properties"));
-        AddAnXLinkForTesting();
-        AddATagForTesting();
+        addAnXLinkForTesting();
+        addATagForTesting();
     }
 
-    public static void AddAnXLinkForTesting() {
+    public static void addAnXLinkForTesting() {
         DbWriter dbWriter = new DbWriter();
         Xlink xLink = new Xlink();
         xLink.setId("xlink1");
@@ -48,7 +48,7 @@ public class DbReaderTest {
         dbWriter.writeXlink(xLink);
     }
 
-    public static void AddATagForTesting() {
+    public static void addATagForTesting() {
         DbWriter dbWriter = new DbWriter();
         Tag tag = new Tag();
         tag.setId("tag1");
@@ -89,7 +89,7 @@ public class DbReaderTest {
         assertEquals(1, result.size());
     }
     @Test
-    public void testGetAerialTagByUri() {
+    public void testGetAerialTagByUri() { // TODO add creator and timestamp to tag_join table and test again
         DbReader dbReader = new DbReader();
         List<Tag> result = dbReader.readAerialTags("/test/test/test",false);
         System.out.println("From testGetTagByUri:" + result);
@@ -106,8 +106,50 @@ public class DbReaderTest {
         assertTrue(result.size() >= 1);
     }
 
+    @Test
+    public void testGetCommentsByCreatedBefore() { // TODO add timestamp column to comment database and test again
+        DbReader dbReader = new DbReader();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        List<Comment> result = dbReader.readComments(calendar, false, "/test/test/test");
+        System.out.println("From testGetCommentsByCreatedBefore" + calendar + ":" + result);
+        assertTrue(result.size() >= 1);
+    }
+
+    @Test
+    public void testGetCommentsById() { // TODO add timestamp column to comment database and test again
+        DbReader dbReader = new DbReader();
+        List<Comment> result = dbReader.readComments("comment1", true);
+        System.out.println("From testGetCommentsById:" + result);
+        assertTrue(result.size() >= 1);
+    }
+
+    @Test
+    public void testGetCommentsByUri() { // TODO add timestamp column to comment database and test again
+        DbReader dbReader = new DbReader();
+        List<Comment> result = dbReader.readComments("/test/test/test", false);
+        System.out.println("From testGetCommentsByUri:" + result);
+        assertTrue(result.size() >= 1);
+    }
+
+    @Test
+    public void testGetObjectIdFromTagId() { // TODO add creator and timestamp to tag_join table and test again
+        DbReader dbReader = new DbReader();
+        String result = dbReader.getObjectIdFromTagId("3ae98fc4-965b-4256-8368-4fe7d74dec73");
+        System.out.println("From testGetObjectIdFromTagId:" + result);
+//        assertTrue(result.size() >= 1);
+    }
+
+    @Test
+    public void testGetObjectIdFromCommentId() { // TODO add creator and timestamp to tag_join table and test again
+        DbReader dbReader = new DbReader();
+        String result = dbReader.getObjectIdFromCommentId("46c5a11a-c0a3-4680-ada8-f3d6b84bef5a");
+        System.out.println("From testGetObjectIdFromCommentId:" + result);
+//        assertTrue(result.size() >= 1);
+    }
+
     @AfterClass
-    public static void RemoveAllTestRecords() {
+    public static void removeAllTestRecords() {
         DbWriter dbWriter = new DbWriter();
         dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("xlink"), "xlink1");
         dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag"), "tag1");
