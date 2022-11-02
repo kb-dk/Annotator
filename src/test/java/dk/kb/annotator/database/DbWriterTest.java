@@ -27,23 +27,23 @@ public class DbWriterTest {
         DbReader dbReader = new DbReader();
 
         Xlink xLink = new Xlink();
-        xLink.setId("id1");
+        xLink.setId("xlink1");
         Category category = new Category();
-        category.setAuthor("x");
+        category.setAuthor("test");
         category.setTerm("isPartOf");
         category.setLabel("");
         xLink.setRole(category);
         xLink.setTitle("title1");
         Link linkTo = new Link();
-        linkTo.setHref("/images/luftfo/2011/maj/luftfoto/object12345");
+        linkTo.setHref("/test/test/test");
         xLink.setLinkTo(linkTo);
         Link linkFrom = new Link();
-        linkFrom.setHref("/images/luftfo/2011/maj/luftfoto/object12345");
+        linkFrom.setHref("/test/test/test");
         xLink.setLinkFrom(linkFrom);
         xLink.setType("simple");
         Calendar calendar = Calendar.getInstance();
         xLink.setUpdated(calendar);
-        xLink.setCreator("Zahra");
+        xLink.setCreator("Test");
 
         dbWriter.writeXlink(xLink);
 
@@ -61,13 +61,13 @@ public class DbWriterTest {
         DbReader dbReader = new DbReader();
 
         Tag tag = new Tag();
-        tag.setId("id1");
+        tag.setId("tag1");
         Content content = new Content();
         content.setType("text");
         content.setValue("Value1");
         tag.setContent(content);
-        tag.setLink("/x/x/x");
-        tag.setCreator("Zahra");
+        tag.setLink("/test/test/test");
+        tag.setCreator("Test");
         Calendar calendar2 = Calendar.getInstance();
         tag.setUpdated(calendar2);
 
