@@ -4,7 +4,6 @@ import dk.kb.annotator.api.ApiUtils;
 import dk.kb.annotator.config.ServiceConfig;
 import dk.kb.annotator.model.*;
 import org.apache.log4j.Logger;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DbWriterTest {
 
-    private static Logger logger = Logger.getLogger(DbWriterTest.class);
+    private static final Logger logger = Logger.getLogger(DbWriterTest.class);
 
     @BeforeClass
     public static void setupDatabase() throws FileNotFoundException {
