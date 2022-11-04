@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 public class DbWriterTest {
 
     private static final Logger logger = Logger.getLogger(DbWriterTest.class);
+    private static final DbWriter dbWriter = new DbWriter();
+    private static final DbReader dbReader = new DbReader();
 
     @BeforeClass
     public static void setupDatabase() throws FileNotFoundException {
@@ -30,12 +32,12 @@ public class DbWriterTest {
         createObjectForTesting();
     }
 
-    private static void createEditionForTesting(){
+    public static void createEditionForTesting(){
         final String INSERT_EDITION =
                 "insert into edition " +
                         "(ID,NAME,NAME_EN,URL_NAME,URL_MATRIAL_TYPE,URL_PUB_YEAR,URL_PUB_MONTH,URL_COLLECTION,CUMULUS_CATALOG,CUMULUS_TOP_CATAGORY,NORMALISATIONRULE,STATUS,UI_LANGUAGE,UI_SORT,UI_SHOW,OPML,DESCRIPTION,DESCRIPTION_EN,COLLECTION_DA,COLLECTION_EN,DEPARTMENT_DA,DEPARTMENT_EN,CONTACT_EMAIL,LAST_MODIFIED,VISIBLE_TO_PUBLIC,LOG) " +
                         "values ('/test/test/test','NAME','NAME_EN','URL_NAME','URL_MATERIAL_TYPE',2022,'URL_PUB_MONTH','URL_COLLECTION','CUMULUS_CATALOG','CUMULUS_TOP_CATEGORY','NORMALISATIONRULE','STATUS','UI_LANGUAGE','UI_SORT','UI_SHOW','OPML','DESCRIPTION','DESCRIPTION_EN','COLLECTION_DA','COLLECTION_EN','DEPARTMENT_DA','DEPARTMENT_EN','CONTACT_EMAIL','1923-05-25',1,'LOG')";
-        logger.info("Writing an object ...");
+        logger.info("Writing an edition ...");
         Connection conn = Database.getConnection();
         PreparedStatement stmt;
         try {
@@ -51,7 +53,7 @@ public class DbWriterTest {
 
     }
 
-    private static void createTypeForTesting(){
+    public static void createTypeForTesting(){
         final String INSERT_TYPE =
                 "insert into type " +
                         "(ID,TYPE_TEXT) " +
@@ -72,7 +74,7 @@ public class DbWriterTest {
 
     }
 
-    private static void createObjectForTesting(){
+    public static void createObjectForTesting(){
         final String INSERT_OBJECT =
                 "insert into object " +
                         "(ID,TYPE_ID,EID,MODS,LAST_MODIFIED,DELETED,LAST_MODIFIED_BY,OBJ_VERSION,POINT,TITLE,CREATOR,BOOKMARK,LIKES,CORRECTNESS,RANDOM_NUMBER,INTERESTINGESS,PERSON,BUILDING,LOCATION,NOT_BEFORE,NOT_AFTER) " +
@@ -94,119 +96,124 @@ public class DbWriterTest {
     }
 
     @Test
-    public void testWriteXlink() {
-        DbWriter dbWriter = new DbWriter();
-        DbReader dbReader = new DbReader();
+    public void testWriteAndDeleteXlink() {
+        Xlink xLink = addATestXlinkToDB();
+        checkIfXlinkExists(xLink.getId());
+        deleteTheXlink(xLink.getId());
+        checkIfXlinkIsDeleted(xLink.getId());
+    }
 
-        // Adding a new xlink to xlink database
-        Xlink xLink = new Xlink();
-        xLink.setId("xlink1");
-        Category category = new Category();
-        category.setAuthor("test");
-        category.setTerm("isPartOf");
-        category.setLabel("");
-        xLink.setRole(category);
-        xLink.setTitle("title1");
-        Link linkTo = new Link();
-        linkTo.setHref("/test/test/test");
-        xLink.setLinkTo(linkTo);
-        Link linkFrom = new Link();
-        linkFrom.setHref("/test/test/test");
-        xLink.setLinkFrom(linkFrom);
-        xLink.setType("simple");
-        Calendar calendar = Calendar.getInstance();
-        xLink.setUpdated(calendar);
-        xLink.setCreator("Test");
+    public static Xlink addATestXlinkToDB() {
+        Xlink xLink = new Xlink("xlink1", "isPartOf", "title1", "simple", Calendar.getInstance(), "/test/test/test", "/test/test/test", "Test" );
         dbWriter.writeXlink(xLink);
+        return xLink;
+    }
 
-        // Check if the xlink is in the table
-        ArrayList<Xlink> xLinks = dbReader.readXlinks(xLink.getId(), true);
+    private void checkIfXlinkExists(String id) {
+        ArrayList<Xlink> xLinks = dbReader.readXlinks(id, true);
         System.out.println(xLinks);
         assertEquals(1, xLinks.size());
+    }
 
-        // Cleaning up afterwards
-        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("xlink"), xLink.getId());
+    public static void deleteTheXlink(String id) {
+        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("xlink"), id);
+    }
+
+    private void checkIfXlinkIsDeleted(String id) {
+        ArrayList<Xlink> xLinks = dbReader.readXlinks(id, true);
+        System.out.println(xLinks);
+        assertEquals(0, xLinks.size());
     }
 
     @Test
-    public void testWriteAerialTag(){ // TODO add creator and timestamp to tag_join table and test again
-        DbWriter dbWriter = new DbWriter();
-        DbReader dbReader = new DbReader();
+    public void testWriteAndDeleteAerialTag(){
+        Tag tag = addATestAerialTagToDB();
+        checkIfAerialTagExists(tag.getId());
+        deleteTheAerialTag(tag.getId());
+        checkIfAerialTagIsDeleted(tag.getId());
+    }
 
-        // Adding a new aerial tag to tag database
-        Tag tag = new Tag();
-        tag.setId("tag1");
-        Content content = new Content();
-        content.setType("test");
-        content.setValue("Value1");
-        tag.setContent(content);
-        tag.setLink("/test/test/test");
-        tag.setCreator("Test");
-        Calendar calendar2 = Calendar.getInstance();
-        tag.setUpdated(calendar2);
+    public static Tag addATestAerialTagToDB() {
+        Tag tag = new Tag("tag1", "contentXXXXXXX", Calendar.getInstance(), "/test/test/test/objectxxxxx", "Test");
         dbWriter.writeAerialTag(tag);
+        return tag;
+    }
 
-        // Check if the aerial tag is in the table
-        ArrayList<Tag> tags = dbReader.readAerialTags(tag.getId(), true);
+    private void checkIfAerialTagExists(String id) {
+        ArrayList<Tag> tags = dbReader.readAerialTags(id, true);
         System.out.println(tags);
         assertEquals(1, tags.size());
+    }
 
-        // Cleaning up afterwards
-        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag_aerial"), tag.getId());
+    public static void deleteTheAerialTag(String id) {
+        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag_aerial"), id);
+        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag"), id);
+    }
+
+    private void checkIfAerialTagIsDeleted(String id) {
+        ArrayList<Tag> tags = dbReader.readAerialTags(id, true);
+        System.out.println(tags);
+        assertEquals(0, tags.size());
     }
 
     @Test
-    public void testWriteTag(){
-        DbWriter dbWriter = new DbWriter();
-        DbReader dbReader = new DbReader();
+    public void testWriteAndDeleteTag(){
+        Tag tag = addATestTagToDB();
+        checkIfTagExists(tag.getId());
+        deleteTheTag(tag.getId());
+        checkIfTagIsDeleted(tag.getId());
+    }
 
-        // Adding a new tag to tag database
-        Tag tag = new Tag();
-        tag.setId("tag1");
-        Content content = new Content();
-        content.setType("text");
-        content.setValue("Value1");
-        tag.setContent(content);
-        tag.setLink("/test/test/test");
-        tag.setCreator("Test");
-        Calendar calendar2 = Calendar.getInstance();
-        tag.setUpdated(calendar2);
+    public static Tag addATestTagToDB() {
+        Tag tag = new Tag("tag1", "contentXXXXXXX", Calendar.getInstance(), "/test/test/test/objectxxxxx", "Test");
         dbWriter.writeTag(tag);
+        return tag;
+    }
 
-        // Check if the tag is in the table
-        ArrayList<Tag> tags = dbReader.readTags(tag.getId(), true);
+    private void checkIfTagExists(String id) {
+        ArrayList<Tag> tags = dbReader.readTags(id, true);
         System.out.println(tags);
         assertEquals(1, tags.size());
+    }
 
-        // Cleaning up afterwards
-        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag"), tag.getId());
+    public static void deleteTheTag(String id) {
+        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("tag"), id);
+    }
+
+    private void checkIfTagIsDeleted(String id) {
+        ArrayList<Tag> tags = dbReader.readTags(id, true);
+        System.out.println(tags);
+        assertEquals(0, tags.size());
     }
 
     @Test
-    public void testWriteComment(){
-        DbWriter dbWriter = new DbWriter();
-        DbReader dbReader = new DbReader();
+    public void testWriteAndDeleteComment(){
+        Comment comment = addATestCommentToDB();
+        checkIfCommentExists(comment.getId());
+        deleteTheComment(comment.getId());
+        checkIfCommentIsDeleted(comment.getId());
+    }
 
-        // Adding a new comment to comment database
-        Comment comment = new Comment();
-        comment.setId("comment1");
-        Content content = new Content();
-        content.setType("text");
-        content.setValue("Value1");
-        comment.setContent(content);
-        comment.setUpdated(Calendar.getInstance());
-        comment.setLink("/test/test/test/objectxxxxx");
-        comment.setCreator("test");
-        comment.setHostUri("http://cop-02.kb.dk:8080//annotation/comment");
+    public static Comment addATestCommentToDB() {
+        Comment comment = new Comment("comment1", "contentXXXXXXX", Calendar.getInstance(), "/test/test/test/objectxxxxx", "test", "http://cop-02.kb.dk:8080//annotation/comment");
         dbWriter.writeComment(comment);
+        return comment;
+    }
 
-        // Check if the comment is in the table
-        ArrayList<Comment> comments = dbReader.readComments(comment.getId(), true);
+    private void checkIfCommentExists(String id) {
+        ArrayList<Comment> comments = dbReader.readComments(id, true);
         System.out.println(comments);
         assertEquals(1, comments.size());
+    }
 
-        // Cleaning up afterwards
-        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("comment"), comment.getId());
+    public static void deleteTheComment(String id) {
+        dbWriter.deleteAnnotation(ApiUtils.annotationType.valueOf("comment"), id);
+    }
+
+    private void checkIfCommentIsDeleted(String id) {
+        ArrayList<Comment> comments = dbReader.readComments(id, true);
+        System.out.println(comments);
+        assertEquals(0, comments.size());
     }
 
     @AfterClass
@@ -217,13 +224,21 @@ public class DbWriterTest {
                 "delete from type where ID=100";
         final String DELETE_OBJECT =
                 "delete from object where ID='/test/test/test/objectxxxxx'";
+        final String DELETE_OBJECT_TAG =
+                "delete from tag_join where oid='/test/test/test/objectxxxxx'";
 
         Connection conn = Database.getConnection();
         PreparedStatement stmt;
         try {
+            logger.info("Deleting test all the tag_join entries with object id ...");
+            stmt = conn.prepareStatement(DELETE_OBJECT_TAG);
+            int wasExecuted = stmt.executeUpdate();
+            logger.info("wasExecuted = " + wasExecuted);
+            logger.info("Test tag-object relations are deleted");
+
             logger.info("Deleting test object ...");
             stmt = conn.prepareStatement(DELETE_OBJECT);
-            int wasExecuted = stmt.executeUpdate();
+            wasExecuted = stmt.executeUpdate();
             logger.info("wasExecuted = " + wasExecuted);
             logger.info("Test object is deleted");
 
