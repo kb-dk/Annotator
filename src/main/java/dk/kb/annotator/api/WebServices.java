@@ -7,14 +7,10 @@ import dk.kb.annotator.model.AtomFeed;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
-import dk.kb.annotator.util.AMQBean;
-import dk.kb.annotator.util.JMSProducer;
 import org.apache.log4j.Logger;
 
-import javax.jms.JMSException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -23,11 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+
 
 /**
  * Class that implements the API described in the README file of the project
@@ -42,7 +34,7 @@ public class WebServices {
     public boolean isTest = false;
 
     // Static logger object
-    private static Logger logger = Logger.getLogger(WebServices.class);
+    private static final Logger logger = Logger.getLogger(WebServices.class);
 
     // This is the database read handle
     private DbReader dbReader = null; //new DbReader();
@@ -88,9 +80,9 @@ public class WebServices {
             if (getById) uri=id;
 
             //todo: move all logic to utility class
-            ArrayList<dk.kb.annotator.model.Xlink> xlinks = null;
-            ArrayList<dk.kb.annotator.model.Tag> tags = null;
-            ArrayList<dk.kb.annotator.model.Comment> comments = null;
+            ArrayList<dk.kb.annotator.model.Xlink> xlinks;
+            ArrayList<dk.kb.annotator.model.Tag> tags;
+            ArrayList<dk.kb.annotator.model.Comment> comments;
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  'at' HH:mm:ss z");
 
@@ -453,20 +445,8 @@ public class WebServices {
     }
     */
 
+    //TODO: call solrizr service in cop Backdn
     private void sendToSolrizr(String uri) {
-        try {
-            javax.naming.Context initialContext = new InitialContext();
-            AMQBean datasource = (AMQBean) initialContext.lookup("java:comp/env/bean/AMQBeanFactory");
-            logger.debug("sending "+uri+" to "+datasource.getHost());
-            JMSProducer producer = new JMSProducer(
-                    datasource.getHost(),
-                    datasource.getUpdateQueue());
-            producer.sendMessage(uri);
-            producer.shutDownPRoducer();
-        } catch (NamingException e) {
-            logger.error("Unable to initialize context ",e);
-        } catch (JMSException e) {
-            logger.error("Unable to create JMSProducer ",e);
-        }
+        logger.debug("TODO: call solrizer "+uri);
     }
 }
