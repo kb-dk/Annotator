@@ -3,7 +3,8 @@ package dk.kb.annotator.api;
 //Log imports
 
 import dk.kb.annotator.model.Annotation;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.net.URI;
@@ -18,7 +19,7 @@ import java.util.*;
 public class ApiUtils {
 
 
-    private static Logger logger = Logger.getLogger(ApiUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiUtils.class);
 
     /**
      * Definition of annotation semantics
@@ -60,7 +61,7 @@ public class ApiUtils {
         // Case no query
         if (query != null) {
             // Case multiple parameters
-            if (query.indexOf("&") > -1) {
+            if (query.contains("&")) {
                 String newQuery = "";
                 String[] params = query.split("&");
                 List<String> paramList = Arrays.asList(params);

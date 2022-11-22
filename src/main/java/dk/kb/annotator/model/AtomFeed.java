@@ -3,11 +3,11 @@ package dk.kb.annotator.model;
 // JAXB
 
 import dk.kb.annotator.api.ApiUtils;
-import javax.xml.bind.annotation.XmlAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,7 +23,7 @@ import java.util.List;
 public class AtomFeed {
 
 
-    private static Logger logger = Logger.getLogger(AtomFeed.class);
+    private static final Logger logger = LoggerFactory.getLogger(AtomFeed.class);
 
     // definitions of the content 
     // of an Atom feed
@@ -40,7 +40,7 @@ public class AtomFeed {
     private List<Xlink> xlinks = null;
     private List<Tag> tags = null;
 
-    private TagEntry singleTag = new TagEntry(); // ABW added one single tag entry
+    private final TagEntry singleTag = new TagEntry(); // ABW added one single tag entry
 
 
     // Default constructor needed by JAXB

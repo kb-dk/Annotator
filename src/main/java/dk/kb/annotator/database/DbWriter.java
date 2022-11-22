@@ -5,7 +5,8 @@ import dk.kb.annotator.model.Annotation;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.Calendar;
 
 public class DbWriter {
 
-    private static Logger logger = Logger.getLogger(DbWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbWriter.class);
     //
     // Canned SQL. No fun!
     //
@@ -133,7 +134,7 @@ public class DbWriter {
                     conn.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException",e);
             }
         }
         logger.info("Finished writing an XLink...");
@@ -177,7 +178,7 @@ public class DbWriter {
                         conn.close();
                     }
                 } catch (SQLException e) {
-                    logger.warn(e);
+                    logger.warn("SQLException",e);
                 }
             }
         } else if (writeTag(t) != null){ // existing tag doesn't exist.
@@ -204,7 +205,7 @@ public class DbWriter {
                     try {
                         stmt.close();
                     } catch (SQLException e) {
-                        logger.warn(e);
+                        logger.warn("SQLException",e);
                     }
                 }
 
@@ -212,7 +213,7 @@ public class DbWriter {
                     try {
                         conn.close();
                     } catch (SQLException e) {
-                        logger.warn(e);
+                        logger.warn("SQLException",e);
                     }
                 }
             }
@@ -253,7 +254,7 @@ public class DbWriter {
                 t = null;
             }
         } catch (SQLException sqlException) {
-            logger.warn(sqlException);
+            logger.warn("SQLException",sqlException);
             t = null;
         }
         finally {
@@ -261,7 +262,7 @@ public class DbWriter {
                 stmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException",e);
             }
         }
 
@@ -305,14 +306,14 @@ public class DbWriter {
                 c = null;
             }
         } catch (SQLException sqlException) {
-            logger.warn(sqlException);
+            logger.warn("SQLException",sqlException);
             c = null;
         } finally {
             try {
                 stmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException",e);
             }
         }
 
@@ -382,7 +383,7 @@ public class DbWriter {
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException sql) {
-                logger.warn(sql);
+                logger.warn("SQLException",sql);
                 return false;
             }
         }
@@ -414,7 +415,7 @@ public class DbWriter {
             found = rs.next();
 
         } catch (SQLException sqlException) {
-            logger.warn(sqlException);
+            logger.warn("SQLException",sqlException);
         } finally {
             try {
                 if (rs != null) {
@@ -427,7 +428,7 @@ public class DbWriter {
                     conn.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException",e);
             }
         }
 

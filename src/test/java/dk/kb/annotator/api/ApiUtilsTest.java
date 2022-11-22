@@ -2,12 +2,10 @@ package dk.kb.annotator.api;
 
 //Log imports
 
-import dk.kb.annotator.api.ApiUtils;
 import dk.kb.annotator.model.Annotation;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 

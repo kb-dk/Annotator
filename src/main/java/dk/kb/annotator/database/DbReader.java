@@ -3,7 +3,8 @@ package dk.kb.annotator.database;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,7 @@ import java.util.Calendar;
 
 public class DbReader {
 
-    private static Logger logger = Logger.getLogger(DbWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbWriter.class);
 
     private static final String SELECT_FROM = "SELECT * FROM ";
 
@@ -105,7 +106,7 @@ public class DbReader {
                     resultSet.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
 
             try {
@@ -113,7 +114,7 @@ public class DbReader {
                     stmt.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
 
             try {
@@ -121,7 +122,7 @@ public class DbReader {
                     conn.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
         }
 
@@ -185,7 +186,7 @@ public class DbReader {
                     }
                 }
             } catch (SQLException e) {
-                logger.error(e);
+                logger.warn("SQLException ",e);
             } finally {
                 try {
                     if (resultSet != null){
@@ -208,7 +209,7 @@ public class DbReader {
                         conn.close();
                     }
                 } catch (SQLException e) {
-                    logger.warn(e);
+                    logger.warn("SQLException ",e);
                 }
             }
         }
@@ -265,7 +266,7 @@ public class DbReader {
                     }
                 }
             } catch (SQLException e) {
-                logger.error(e);
+                logger.warn("SQLException ",e);
             } finally {
                 try {
                     if (resultSet != null){
@@ -288,7 +289,7 @@ public class DbReader {
                         conn.close();
                     }
                 } catch (SQLException e) {
-                    logger.warn(e);
+                    logger.warn("SQLException ",e);
                 }
             }
         }
@@ -355,7 +356,7 @@ public class DbReader {
                     resultSet.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
 
             try {
@@ -363,7 +364,7 @@ public class DbReader {
                     stmt.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
 
             try {
@@ -371,7 +372,7 @@ public class DbReader {
                     conn.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
         }
 
@@ -419,7 +420,7 @@ public class DbReader {
                     conn.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
         }
         return oid;
@@ -461,7 +462,7 @@ public class DbReader {
                     conn.close();
                 }
             } catch (SQLException e) {
-                logger.warn(e);
+                logger.warn("SQLException ",e);
             }
         }
         return oid;

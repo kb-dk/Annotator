@@ -7,7 +7,8 @@ import dk.kb.annotator.model.AtomFeed;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -34,7 +35,7 @@ public class WebServices {
     public boolean isTest = false;
 
     // Static logger object
-    private static final Logger logger = Logger.getLogger(WebServices.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebServices.class);
 
     // This is the database read handle
     private DbReader dbReader = null; //new DbReader();

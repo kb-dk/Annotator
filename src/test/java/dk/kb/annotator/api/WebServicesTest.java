@@ -2,7 +2,8 @@ package dk.kb.annotator.api;
 
 //Log imports
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -18,7 +19,7 @@ class WebServicesTest {
     }
 
     // Static logger object
-    private static Logger logger = Logger.getLogger(WebServicesTest.class);
+    private static Logger logger = LoggerFactory.getLogger(WebServicesTest.class);
     
     // Path to test xml files
     private final static File ANNOTATION_FILE = new File("testdata/annotations.xml");

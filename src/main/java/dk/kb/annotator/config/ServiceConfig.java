@@ -1,16 +1,14 @@
 package dk.kb.annotator.config;
 
-import dk.kb.annotator.database.Database;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class ServiceConfig {
-    public static final Logger logger = Logger.getLogger(ServiceConfig.class);
+    public static final Logger logger = LoggerFactory.getLogger(ServiceConfig.class);
 
     private static Properties properties;
 
@@ -25,7 +23,7 @@ public class ServiceConfig {
         logger.info("Loaded properties");
         properties.keySet().stream()
                 .filter(key->!"database.password".equals(key))
-                .forEach(key -> {logger.info(key+"="+properties.get(key));});
+                .forEach(ServiceConfig::accept);
     }
 
     public static Properties getProperties() {
@@ -46,5 +44,9 @@ public class ServiceConfig {
 
     public static String getDatabasePassword() {
         return properties.getProperty("database.password");
+    }
+
+    private static void accept(Object key) {
+        logger.info(key + "=" + properties.get(key));
     }
 }

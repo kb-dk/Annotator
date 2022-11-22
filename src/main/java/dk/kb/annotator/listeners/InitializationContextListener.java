@@ -1,7 +1,8 @@
 package dk.kb.annotator.listeners;
 
 import dk.kb.annotator.config.ServiceConfig;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -13,11 +14,13 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class InitializationContextListener implements ServletContextListener {
-    private static final Logger logger = Logger.getLogger(InitializationContextListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(InitializationContextListener.class);
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         InputStream in;
+        String version = getClass().getPackage().getImplementationVersion();
+        logger.info("Starting Annotatator ...");
         try {
             InitialContext ctx = new InitialContext();
             String propFile = (String) ctx.lookup("java:comp/env/annotatorProperties");
@@ -26,10 +29,11 @@ public class InitializationContextListener implements ServletContextListener {
             logger.warn("Using default annotator properties");
             in = this.getClass().getResourceAsStream("/annotator.properties");
         } catch (FileNotFoundException e) {
-            logger.fatal("Configfile not found ", e);
+            logger.error("Configfile not found ", e);
             throw new RuntimeException("Configfile not found ", e);
         }
         ServiceConfig.initialize(in);
+        logger.info("Annotator version "+version+" started succesfully");
     }
 
     @Override
