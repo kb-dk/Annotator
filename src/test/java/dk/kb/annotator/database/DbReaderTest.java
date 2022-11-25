@@ -2,12 +2,14 @@ package dk.kb.annotator.database;
 
 import dk.kb.annotator.model.*;
 import org.apache.log4j.Logger;
-import org.junit.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DbReaderTest {
 
@@ -20,7 +22,7 @@ public class DbReaderTest {
         return calendar;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setupDatabase() throws FileNotFoundException {
         DbWriterTest.setupDatabase();
         DbWriterTest.addATestCommentToDB();
@@ -98,7 +100,7 @@ public class DbReaderTest {
         assertEquals("/test/test/test/objectxxxxx", result);
     }
 
-    @AfterClass
+    @AfterAll
     public static void removeAllTestRecords() {
         logger.info("Cleaning up ...");
         DbWriterTest.deleteTheXlink("xlink1");

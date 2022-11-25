@@ -4,10 +4,6 @@ import dk.kb.annotator.api.ApiUtils;
 import dk.kb.annotator.config.ServiceConfig;
 import dk.kb.annotator.model.*;
 import org.apache.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
@@ -15,8 +11,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbWriterTest {
 
@@ -24,7 +22,7 @@ public class DbWriterTest {
     private static final DbWriter dbWriter = new DbWriter();
     private static final DbReader dbReader = new DbReader();
 
-    @BeforeClass
+    @BeforeAll
     public static void setupDatabase() throws FileNotFoundException {
         ServiceConfig.initialize(new FileInputStream("src/test/resources/annotator.properties"));
         createEditionForTesting();
@@ -216,7 +214,7 @@ public class DbWriterTest {
         assertEquals(0, comments.size());
     }
 
-    @AfterClass
+    @AfterAll
     public static void removeTestRecords(){
         final String DELETE_EDITION =
                 "delete from edition where ID='/test/test/test'";
@@ -258,7 +256,5 @@ public class DbWriterTest {
         }catch (SQLException sqlException) {
             logger.error(sqlException.getMessage(), sqlException);
         }
-
     }
-
 }
