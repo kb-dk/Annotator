@@ -3,7 +3,6 @@ package dk.kb.annotator.database;
 import dk.kb.annotator.api.ApiUtils;
 import dk.kb.annotator.config.ServiceConfig;
 import dk.kb.annotator.model.*;
-import org.apache.log4j.Logger;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
@@ -14,11 +13,14 @@ import java.util.Calendar;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbWriterTest {
 
-    private static final Logger logger = Logger.getLogger(DbWriterTest.class);
+    private static final Logger logger =  LoggerFactory.getLogger(DbWriterTest.class);
     private static final DbWriter dbWriter = new DbWriter();
     private static final DbReader dbReader = new DbReader();
 

@@ -1,19 +1,21 @@
 package dk.kb.annotator.database;
 
 import dk.kb.annotator.model.*;
-import org.apache.log4j.Logger;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DbReaderTest {
 
-    private static final Logger logger = Logger.getLogger(DbReaderTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbReaderTest.class);
     private final DbReader dbReader = new DbReader();
 
     private Calendar getYesterday() {
