@@ -402,7 +402,7 @@ public class DbWriter {
         }
 
         boolean found = false;
-        String check_sql = "select count(*) as hits from " + table + " where id=?";
+        String check_sql = "select * from " + table + " where id=?";
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -412,7 +412,10 @@ public class DbWriter {
             stmt.setString(1, a.getId());
 
             rs = stmt.executeQuery();
-            found = rs.next();
+            if (rs.next()) {
+                found = true;
+                logger.info("A record with this id exists in table" + table);
+            }
 
         } catch (SQLException sqlException) {
             logger.warn("SQLException",sqlException);

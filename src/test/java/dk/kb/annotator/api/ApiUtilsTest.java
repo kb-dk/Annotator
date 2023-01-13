@@ -1,20 +1,18 @@
 package dk.kb.annotator.api;
 
-//Log imports
-
 import dk.kb.annotator.model.Annotation;
 import dk.kb.annotator.model.Comment;
 import dk.kb.annotator.model.Tag;
 import dk.kb.annotator.model.Xlink;
-import org.junit.Before;
-import org.junit.Test;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 // JUnit imports
 
@@ -26,7 +24,7 @@ public class ApiUtilsTest {
     // Tivial Logger object 
     //private static Logger logger = Logger.getLogger(ApiUtilsTest.class);
 
-    @Before
+    @BeforeEach
     public void setup(){
         System.out.println("Setup - API Utils ");
     }
@@ -67,10 +65,15 @@ public class ApiUtilsTest {
     * Names on testcases should explain the test.
     */
 
-    @Test(expected = java.net.URISyntaxException.class)
-    public void testNormalizedUriWrongUriSyntax() throws java.net.URISyntaxException {
+    @Test
+    public void testNormalizedUriWrongUriSyntax(){
         String uriString = "http://foo.bar.dk%¤&¤&%7";
-        ApiUtils.normalizeUri(uriString);
+        try{
+            ApiUtils.normalizeUri(uriString);
+            fail();
+        } catch (URISyntaxException exception){
+            assertTrue(true);
+        }
     }
 
 

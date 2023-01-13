@@ -25,6 +25,7 @@ public class Comment extends Annotation {
     private String hosturi = ""; // @todo slu tilføjer host uri fil. @fixed 20110308/slu
 
     public Comment() {
+        this.link = new Link();
     }
 
     /**
