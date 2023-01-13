@@ -1,12 +1,34 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>dk.kb.annotator</groupId>
     <artifactId>Annotator</artifactId>
     <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <name>Annotator Maven Webapp</name>
     <url>http://maven.apache.org</url>
+
+    <distributionManagement>
+        <repository>
+            <id>sbprojects-nexus</id>
+            <name>SBProjectsRepo manager</name>
+            <url>https://sbprojects.statsbiblioteket.dk/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>sbprojects-nexus</id>
+            <name>SBProjects Nexus Repo manager</name>
+            <url>https://sbprojects.statsbiblioteket.dk/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <!-- This needs to be overridden in projects with subproject, where the (sub)projects typically will be deployed to a
+              common site url based on the parent projects artifactId -->
+        <!-- <site> <id>sbforge-nexus</id> <name>SBForge Maven site</name> <url>${project.site.location}</url> </site> -->
+    </distributionManagement>
+
+    <scm>
+        <url>https://github.com/kb-dk/Annotator</url>
+        <connection>scm:git:git@github.com:kb-dk/Annotator.git</connection>
+        <developerConnection>scm:git:git@github.com:kb-dk/Annotator.git</developerConnection>
+        <tag>cop-backend</tag>
+    </scm>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -84,7 +106,21 @@
     </dependencies>
     <build>
         <finalName>annotation</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <preparationGoals>clean verify install</preparationGoals>
+                </configuration>
+            </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -93,15 +129,6 @@
               <skipTests>true</skipTests>
             </configuration>
           </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>tomcat-maven-plugin</artifactId>
-                <version>1.1</version>
-                <configuration>
-                    <url>http://disdev-01:8080/manager</url>
-                    <server>tomcat-test</server>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <repositories>
