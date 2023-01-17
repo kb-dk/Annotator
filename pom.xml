@@ -27,7 +27,7 @@
         <url>https://github.com/kb-dk/Annotator</url>
         <connection>scm:git:git@github.com:kb-dk/Annotator.git</connection>
         <developerConnection>scm:git:git@github.com:kb-dk/Annotator.git</developerConnection>
-        <tag>cop-backend</tag>
+        <tag>annotator</tag>
     </scm>
 
     <properties>
