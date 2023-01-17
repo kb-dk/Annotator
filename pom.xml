@@ -3,7 +3,7 @@
     <groupId>dk.kb.annotator</groupId>
     <artifactId>Annotator</artifactId>
     <packaging>war</packaging>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1</version>
     <name>Annotator Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
@@ -27,7 +27,7 @@
         <url>https://github.com/kb-dk/Annotator</url>
         <connection>scm:git:git@github.com:kb-dk/Annotator.git</connection>
         <developerConnection>scm:git:git@github.com:kb-dk/Annotator.git</developerConnection>
-        <tag>annotator</tag>
+        <tag>Annotator-2.0.1</tag>
     </scm>
 
     <properties>
