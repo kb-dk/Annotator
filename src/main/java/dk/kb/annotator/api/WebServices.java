@@ -1,5 +1,6 @@
 package dk.kb.annotator.api;
 
+import dk.kb.annotator.config.ServiceConfig;
 import dk.kb.annotator.database.DbReader;
 import dk.kb.annotator.database.DbWriter;
 import dk.kb.annotator.model.Annotation;
@@ -12,9 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +44,8 @@ public class WebServices {
 
     // This is the database read handle
     private DbReader dbReader = null; //new DbReader();
+
+    HttpClient client = HttpClient.newHttpClient();
 
     @GET
     @Path("/hello")
@@ -446,8 +453,21 @@ public class WebServices {
     }
     */
 
-    //TODO: call solrizr service in cop Backdn
+    //TODO: call solrizr service in cop Backedn
     private void sendToSolrizr(String uri) {
-        logger.debug("TODO: call solrizer "+uri);
+        if (ServiceConfig.getSolrizrBaseUrl() != null) {
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(ServiceConfig.getSolrizrBaseUrl()+uri))
+                        .GET()
+                        .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() != 200) {
+                    logger.warn("Error solrizing {} : {}", uri, response.statusCode());
+                }
+            } catch (IOException | InterruptedException e) {
+                logger.warn("Error solrizing {} : {}", uri, e.getMessage());
+            }
+        }
     }
 }

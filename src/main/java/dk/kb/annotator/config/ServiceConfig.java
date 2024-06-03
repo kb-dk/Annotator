@@ -46,6 +46,8 @@ public class ServiceConfig {
         return properties.getProperty("database.password");
     }
 
+    public static String getSolrizrBaseUrl() { return properties.getProperty("solrizr.baseurl",null); }
+
     private static void accept(Object key) {
         logger.info(key + "=" + properties.get(key));
     }
